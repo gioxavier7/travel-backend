@@ -175,6 +175,28 @@ app.delete('/v1/diario-viagem/sexo/:id', cors(), async function(request, respons
     response.json(result)
 })
 
+//endpoint para retornar lista de sexos
+app.get('/v1/diario-viagem/nacionalidade', cors(), async function(request, response){
+
+    //chama a função para retornar uma lista de usuario
+    let result = await controllerNacionalidade.listarNacionalidade()
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//endpoint para buscar um sexo pelo id
+app.get('/v1/diario-viagem/nacionalidade/:id', cors(), async function(request, response){
+
+    let idNacionalidade = request.params.id
+
+    let result = await controllerNacionalidade.buscarNacionalidade(idNacionalidade)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
 app.listen(8080, function(){
     console.log('Servidor aguardando novas requisições...')
 })
