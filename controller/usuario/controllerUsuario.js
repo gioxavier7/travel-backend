@@ -12,6 +12,10 @@ const MESSAGE = require('../../modulo/config.js')
 const usuarioDAO = require('../../model/dao/usuario.js')
 const { json } = require('body-parser')
 
+//Import das controlleres para criar as relações com usuario e sexo
+const controllerSexo = require('../../controller/sexo/controllerSexo.js')
+const controllerNacionalidade = require('../../controller/nacionalidade/controllerNacionalidade.js')
+
 //funcao pra inserir um novo usuário
 const inserirUsuario = async function(usuario, contentType){
     try {
@@ -19,12 +23,14 @@ const inserirUsuario = async function(usuario, contentType){
         {
             if(
                 usuario.nome == undefined || usuario.nome == '' || usuario.nome == null || usuario.nome.length > 50 ||
-                usuario.username == undefined || usuario.username == '' || usuario.username == null || usuario.username.length > 45 ||
-                usuario.email == undefined || usuario.email == '' || usuario.email == null || usuario.email.length > 75 ||
-                usuario.senha == undefined || usuario.senha == '' || usuario.senha == null || usuario.senha.length > 8 ||
-                usuario.palavra_chave == undefined || usuario.palavra_chave == '' || usuario.palavra_chave == null || usuario.palavra_chave.length > 10 ||
-                usuario.biografia == undefined || usuario.biografia == '' || usuario.biografia == null || usuario.biografia.length > 100 ||
-                usuario.data_conta == undefined || usuario.data_conta == '' || usuario.data_conta == null || usuario.data_conta.length > 1
+                usuario.username == undefined || usuario.username == '' || usuario.username == null || usuario.username.length > 50 ||
+                usuario.email == undefined || usuario.email == '' || usuario.email == null || usuario.email.length > 50 ||
+                usuario.senha == undefined || usuario.senha == '' || usuario.senha == null || usuario.senha.length > 20 ||
+                usuario.biografia == undefined || usuario.biografia == '' || usuario.biografia == null || usuario.biografia.length > 200 ||
+                usuario.data_conta == undefined || usuario.data_conta == '' || usuario.data_conta == null || usuario.data_conta.length > 1 ||
+                usuario.foto_perfil == undefined || usuario.foto_perfil == '' || usuario.foto_perfil == null || usuario.foto_perfil > 1 ||
+                usuario.id_sexo == undefined || usuario.id_sexo == '' ||
+                usuario.id_nacionalidade == undefined || usuario.id_nacionalidade == ''
             ){
                 return MESSAGE.ERROR_REQUIRE_FIELDS //400
             }else{
@@ -45,9 +51,13 @@ const inserirUsuario = async function(usuario, contentType){
 
 const listarUsuario = async function(){
     try {
+        //objeto do tipo array pra utilizar no foreach para carregar os dados do usuario, nacionalidade e sexo
+        arrayUsuario = []
+
+        //objeto json
         let dadosUsuario = {}
 
-        //chamar a função que retorna as musicas
+        //chamar a função que retorna os usuarios
         let resultUsuario = await usuarioDAO.selectAllUsuario()
 
         if(resultUsuario != false || typeof(resultUsuario) == 'object')
@@ -57,8 +67,28 @@ const listarUsuario = async function(){
                 dadosUsuario.status = true
                 dadosUsuario.status_code = 200
                 dadosUsuario.item = resultUsuario.length
-                dadosUsuario.usuario = resultUsuario
-                return dadosUsuario //200
+
+                //for of para requisição assíncrona e await
+                for(itemUsuario of resultUsuario){
+                    //busca os dados do sexo na controller usando o id do sexo
+                    let dadosSexo = await controllerSexo.buscarSexo(itemUsuario.id_sexo)
+                    //busca os dados da nacionalidade na controller usando o id da nacionalidade
+                    let dadosNacionalidade = await controllerNacionalidade.buscarNacionalidade(itemUsuario.id_nacionalidade)
+
+                    //adicionando um atributo (sexo) no json de usuarios
+                    itemUsuario.sexo = dadosSexo.sexo
+                    //adicionando um atrito (nacionalidade) no json de usuario
+                    itemUsuario.nacionalidade = dadosNacionalidade.nacionalidade
+
+                    //remove o atributo id_sexo e id_nacionalidade do json de usuario, pois ja tem o id dentro dos dados de sexo e nacionalidade
+                    delete itemUsuario.id_sexo
+                    delete itemUsuario.id_nacionalidade
+
+                    //adiciona o json do usuario, agora com os dados de sexo e nacionalidade em um array
+                    arrayUsuario.push(itemUsuario)
+                }
+                //adiciona o novo array de usuario no json pra retornar no app
+                dadosUsuario.usuario = arrayUsuario
             }else{
                 return MESSAGE.ERROR_NOT_FOUND //404
             }
@@ -74,6 +104,8 @@ const listarUsuario = async function(){
 //função para listar um usuario pelo ID
 const buscarUsuario = async function(id){
     try {
+        let arrayUsuario = []
+
         if(id == '' || id == undefined || id == null || isNaN(id) || id <= 0){
             return MESSAGE.ERROR_REQUIRE_FIELDS //400
         }else{
@@ -84,8 +116,29 @@ const buscarUsuario = async function(id){
                 if(resultUsuario.length > 0){
                     dadosUsuario.status = true
                     dadosUsuario.status_code = 200
-                    dadosUsuario.usuario = resultUsuario
-                    return dadosUsuario //200
+                    
+                //for of para requisição assíncrona e await
+                for(itemUsuario of resultUsuario){
+                    //busca os dados do sexo na controller usando o id do sexo
+                    let dadosSexo = await controllerSexo.buscarSexo(itemUsuario.id_sexo)
+                    //busca os dados da nacionalidade na controller usando o id da nacionalidade
+                    let dadosNacionalidade = await controllerNacionalidade.buscarNacionalidade(itemUsuario.id_nacionalidade)
+
+                    //adicionando um atributo (sexo) no json de usuarios
+                    itemUsuario.sexo = dadosSexo.sexo
+                    //adicionando um atrito (nacionalidade) no json de usuario
+                    itemUsuario.nacionalidade = dadosNacionalidade.nacionalidade
+
+                    //remove o atributo id_sexo e id_nacionalidade do json de usuario, pois ja tem o id dentro dos dados de sexo e nacionalidade
+                    delete itemUsuario.id_sexo
+                    delete itemUsuario.id_nacionalidade
+
+                    //adiciona o json do usuario, agora com os dados de sexo e nacionalidade em um array
+                    arrayUsuario.push(itemUsuario)
+                }
+                //adiciona o novo array de usuario no json pra retornar no app
+                dadosUsuario.usuario = arrayUsuario
+
                 }else{
                     return MESSAGE.ERROR_NOT_FOUND //404
                 }
@@ -105,9 +158,13 @@ const atualizarUsuario = async function(usuario, id, contentType){
         {
             if(
                 usuario.nome == undefined || usuario.nome == '' || usuario.nome == null || usuario.nome.length > 50 ||
-                usuario.username == undefined || usuario.username == '' || usuario.username == null || usuario.username.length > 45 ||
-                usuario.email == undefined || usuario.email == '' || usuario.email == null || usuario.email.length > 75 ||
-                usuario.senha == undefined || usuario.senha == '' || usuario.senha == null || usuario.senha.length > 8 ||
+                usuario.username == undefined || usuario.username == '' || usuario.username == null || usuario.username.length > 50 ||
+                usuario.email == undefined || usuario.email == '' || usuario.email == null || usuario.email.length > 50 ||
+                usuario.senha == undefined || usuario.senha == '' || usuario.senha == null || usuario.senha.length > 20 ||
+                usuario.biografia == undefined || usuario.biografia == '' || usuario.biografia == null || usuario.biografia.length > 200 ||
+                usuario.foto_perfil == undefined || usuario.foto_perfil == '' || usuario.foto_perfil == null || usuario.foto_perfil > 1 ||
+                usuario.id_sexo == undefined || usuario.id_sexo == '' ||
+                usuario.id_nacionalidade == undefined || usuario.id_nacionalidade == '' ||
                 id == '' || id == undefined || id == null || isNaN(id) || id <= 0
             ){
                 return MESSAGE.ERROR_REQUIRE_FIELDS //400

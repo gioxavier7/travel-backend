@@ -19,20 +19,22 @@ const insertUsuario = async function(usuario){
                                             username,
                                             email,
                                             senha,
-                                            palavra_chave,
                                             biografia,
                                             data_conta,
-                                            foto_perfil
+                                            foto_perfil,
+                                            id_sexo,
+                                            id_nacionalidade
                                         )
                                     values (
                                             '${usuario.nome}',
                                             '${usuario.username}',
                                             '${usuario.email}',
                                             '${usuario.senha}',
-                                            '${usuario.palavra_chave}',
                                             '${usuario.biografia}',
                                             '${usuario.data_conta}',
-                                            '${usuario.foto_perfil}'
+                                            '${usuario.foto_perfil}',
+                                            '${usuario.id_sexo}',
+                                            '${usuario.id_nacionalidade}'
                                             )`
 
         //executa o script sql do banco de dados e aguarda o retorno 
@@ -55,10 +57,11 @@ const updateUsuario = async function(usuario){
                                                 username = '${usuario.username}',
                                                 email = '${usuario.email}',
                                                 senha = '${usuario.senha}',
-                                                palavra_chave = '${usuario.palavra_chave}',
                                                 biografia = '${usuario.biografia}',
                                                 data_conta = '${usuario.data_conta}',
-                                                foto_perfil = '${usuario.foto_perfil}'
+                                                foto_perfil = '${usuario.foto_perfil}',
+                                                id_sexo = '${usuario.id_sexo}',
+                                                id_nacionalidade = '${usuario.id_nacionalidade}'
                                             where id=${usuario.id}`
 
         let result = await prisma.$executeRawUnsafe(sql)
