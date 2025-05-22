@@ -26,8 +26,9 @@ const inserirUsuario = async function(usuario, contentType){
                 usuario.username == undefined || usuario.username == '' || usuario.username == null || usuario.username.length > 50 ||
                 usuario.email == undefined || usuario.email == '' || usuario.email == null || usuario.email.length > 50 ||
                 usuario.senha == undefined || usuario.senha == '' || usuario.senha == null || usuario.senha.length > 20 ||
-                usuario.biografia == undefined || usuario.biografia == '' || usuario.biografia == null || usuario.biografia.length > 200 ||
-                usuario.foto_perfil == undefined || usuario.foto_perfil == '' || usuario.foto_perfil == null || usuario.foto_perfil > 1 ||
+                usuario.biografia == undefined || usuario.biografia.length > 200 ||
+                usuario.foto_perfil == undefined || usuario.foto_perfil > 250 ||
+                usuario.palavra_chave == undefined || usuario.palavra_chave == '' || usuario.palavra_chave == null || usuario.palavra_chave.length > 100 ||
                 usuario.id_sexo == undefined || usuario.id_sexo == '' ||
                 usuario.id_nacionalidade == undefined || usuario.id_nacionalidade == ''
             ){
@@ -166,8 +167,9 @@ const atualizarUsuario = async function(usuario, id, contentType){
                 usuario.username == undefined || usuario.username == '' || usuario.username == null || usuario.username.length > 50 ||
                 usuario.email == undefined || usuario.email == '' || usuario.email == null || usuario.email.length > 50 ||
                 usuario.senha == undefined || usuario.senha == '' || usuario.senha == null || usuario.senha.length > 20 ||
-                usuario.biografia == undefined || usuario.biografia == '' || usuario.biografia == null || usuario.biografia.length > 200 ||
-                usuario.foto_perfil == undefined || usuario.foto_perfil == '' || usuario.foto_perfil == null || usuario.foto_perfil > 1 ||
+                usuario.biografia == undefined || usuario.biografia.length > 200 ||
+                usuario.foto_perfil == undefined || usuario.foto_perfil > 250 ||
+                usuario.palavra_chave == undefined || usuario.palavra_chave == '' || usuario.palavra_chave == null || usuario.palavra_chave.length > 100 ||
                 usuario.id_sexo == undefined || usuario.id_sexo == '' ||
                 usuario.id_nacionalidade == undefined || usuario.id_nacionalidade == '' ||
                 id == '' || id == undefined || id == null || isNaN(id) || id <= 0
@@ -230,10 +232,35 @@ const excluirUsuario = async function(id){
     }
 }
 
+const recuperarSenha = async function(dados) {
+    try {
+        if (!dados.email || !dados.palavra_recuperacao || !dados.nova_senha)
+            return MESSAGE.ERROR_REQUIRE_FIELDS
+
+        let usuarioValido = await usuarioDAO.verificarEmailEPalavra(dados.email, dados.palavra_recuperacao)
+
+        if (!usuarioValido)
+            return MESSAGE.ERROR_INVALID_USER 
+
+        let atualizado = await usuarioDAO.atualizarSenha(dados.email, dados.nova_senha)
+
+        if (atualizado)
+            return MESSAGE.SUCCESS_UPDATED_ITEM
+        else
+            return MESSAGE.ERROR_INTERNAL_SERVER_MODEL
+
+    } catch (error) {
+        console.log(error)
+        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
+    }
+}
+
+
 module.exports = {
     inserirUsuario,
     listarUsuario,
     buscarUsuario,
     atualizarUsuario,
-    excluirUsuario
+    excluirUsuario,
+    recuperarSenha
 }

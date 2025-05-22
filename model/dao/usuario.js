@@ -21,6 +21,7 @@ const insertUsuario = async function(usuario){
                                             senha,
                                             biografia,
                                             foto_perfil,
+                                            palavra_chave,
                                             id_sexo,
                                             id_nacionalidade
                                         )
@@ -31,6 +32,7 @@ const insertUsuario = async function(usuario){
                                             '${usuario.senha}',
                                             '${usuario.biografia}',
                                             '${usuario.foto_perfil}',
+                                            '${usuario.palavra_chave}',
                                             '${usuario.id_sexo}',
                                             '${usuario.id_nacionalidade}'
                                             )`
@@ -57,6 +59,7 @@ const updateUsuario = async function(usuario){
                                                 senha = '${usuario.senha}',
                                                 biografia = '${usuario.biografia}',
                                                 foto_perfil = '${usuario.foto_perfil}',
+                                                palavra_chave= '${usuario.palavra_chave}',
                                                 id_sexo = '${usuario.id_sexo}',
                                                 id_nacionalidade = '${usuario.id_nacionalidade}'
                                             where id=${usuario.id}`
@@ -128,10 +131,30 @@ const selectByIdUsuario = async function(id){
     }
 }
 
+// funcao pra verificar email e palavra
+const verificarEmailEPalavra = async function(email, palavra) {
+    let sql = `SELECT * FROM tbl_usuario WHERE email = '${email}' AND palavra_chave = '${palavra}'`
+    let result = await prisma.$queryRawUnsafe(sql)
+
+    return result.length > 0 ? result[0] : false
+}
+
+//atualizar senha
+const atualizarSenha = async function(email, novaSenha) {
+    let sql = `UPDATE tbl_usuario SET senha = '${novaSenha}' WHERE email = '${email}'`
+    let result = await prisma.$executeRawUnsafe(sql)
+
+    return result ? true : false
+}
+
+
+
 module.exports = {
     insertUsuario,
     updateUsuario,
     deleteUsuario,
     selectAllUsuario,
-    selectByIdUsuario
+    selectByIdUsuario,
+    verificarEmailEPalavra,
+    atualizarSenha
 }

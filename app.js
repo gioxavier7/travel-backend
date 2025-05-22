@@ -101,6 +101,15 @@ app.put('/v1/diario-viagem/usuario/:id', cors(), bodyParserJSON, async function(
     response.json(result)
 })
 
+app.post('/v1/diario-viagem/usuario/recuperar-senha', cors(), bodyParserJSON, async (request, response) => {
+    let dados = request.body
+    let result = await controllerUsuario.recuperarSenha(dados)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+
 // endpoint para deletar um usuário
 app.delete('/v1/diario-viagem/usuario/:id', cors(), async function(request, response){
     let idUsuario = request.params.id
