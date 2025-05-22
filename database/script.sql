@@ -4,12 +4,13 @@ use db_diario_viagem_b;
 
 create table tbl_usuario(
     id int primary key auto_increment,
-    nome varchar(50),
-    username varchar(50),
-    email varchar(50),
-    senha varchar(20),
+    nome varchar(50) not null,
+    username varchar(50) not null unique,
+    email varchar(50) not null unique,
+    senha varchar(20) not null,
     biografia varchar(200),
-    data_conta  default current_timestamp,
+    data_conta timestamp default current_timestamp,
+    palavra_chave varchar(100) not null,
     foto_perfil varchar(200),
     id_sexo int,
     id_nacionalidade int,
@@ -17,16 +18,20 @@ create table tbl_usuario(
     foreign key(id_nacionalidade) references tbl_nacionalidade(id)
 );
 
+drop table tbl_usuario;
+drop table tbl_sexo;
+drop table tbl_nacionalidade;
+
 create table tbl_sexo(
     id int primary key auto_increment,
-    nome varchar(20),
-    sigla varchar(1)
+    nome varchar(20) not null unique,
+    sigla varchar(1) not null unique
 );
 
 create table tbl_nacionalidade(
     id int primary key auto_increment,
-    pais varchar(80),
-    sigla varchar(3)
+    pais varchar(80) not null unique,
+    sigla varchar(3) not null unique
 );
 
 INSERT INTO tbl_nacionalidade (pais, sigla) VALUES
