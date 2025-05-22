@@ -20,7 +20,6 @@ const insertUsuario = async function(usuario){
                                             email,
                                             senha,
                                             biografia,
-                                            data_conta,
                                             foto_perfil,
                                             id_sexo,
                                             id_nacionalidade
@@ -31,7 +30,6 @@ const insertUsuario = async function(usuario){
                                             '${usuario.email}',
                                             '${usuario.senha}',
                                             '${usuario.biografia}',
-                                            '${usuario.data_conta}',
                                             '${usuario.foto_perfil}',
                                             '${usuario.id_sexo}',
                                             '${usuario.id_nacionalidade}'
@@ -53,12 +51,11 @@ const insertUsuario = async function(usuario){
 //função pra atualizar usuário
 const updateUsuario = async function(usuario){
     try {
-        let sql = `update into tbl_usuario set nome = '${usuario.nome}',
+        let sql = `update tbl_usuario set nome = '${usuario.nome}',
                                                 username = '${usuario.username}',
                                                 email = '${usuario.email}',
                                                 senha = '${usuario.senha}',
                                                 biografia = '${usuario.biografia}',
-                                                data_conta = '${usuario.data_conta}',
                                                 foto_perfil = '${usuario.foto_perfil}',
                                                 id_sexo = '${usuario.id_sexo}',
                                                 id_nacionalidade = '${usuario.id_nacionalidade}'

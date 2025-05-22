@@ -18,7 +18,8 @@ const inserirSexo = async function(sexo, contentType){
         if(String(contentType).toLowerCase() == 'application/json')
         {
             if(
-                sexo.tipo == undefined || sexo.tipo == '' || sexo.tipo == null || sexo.tipo.length > 50
+                sexo.nome == undefined || sexo.nome == '' || sexo.nome == null || sexo.nome.length > 50 ||
+                sexo.sigla == undefined || sexo.sigla == '' || sexo.sigla == null || sexo.sigla.length > 50
             ){
                 return MESSAGE.ERROR_REQUIRE_FIELDS //400
             }else{
@@ -52,7 +53,7 @@ const listarSexo = async function(){
                 dadosSexo.status = true
                 dadosSexo.status_code = 200
                 dadosSexo.item = resultSexo.length
-                dadosSexo.Sexo = resultSexo
+                dadosSexo.sexo = resultSexo
                 return dadosSexo //200
             }else{
                 return MESSAGE.ERROR_NOT_FOUND //404
@@ -79,7 +80,7 @@ const buscarSexo = async function(id){
                 if(resultSexo.length > 0){
                     dadosSexo.status = true
                     dadosSexo.status_code = 200
-                    dadosSexo.Sexo = resultSexo
+                    dadosSexo.sexo = resultSexo
                     return dadosSexo //200
                 }else{
                     return MESSAGE.ERROR_NOT_FOUND //404
@@ -109,7 +110,7 @@ const atualizarSexo = async function(sexo, id, contentType){
 
                 if(resultSexo.status_code == 200){
                     //update
-                    Sexo.id = id //adiciona o atributo id no json e e coloca o id da Sexo que chegou na controller
+                    sexo.id = id //adiciona o atributo id no json e e coloca o id da Sexo que chegou na controller
                     let result = await sexoDAO.updateSexo(sexo)
 
                     if(result){

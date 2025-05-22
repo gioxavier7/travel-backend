@@ -27,7 +27,6 @@ const inserirUsuario = async function(usuario, contentType){
                 usuario.email == undefined || usuario.email == '' || usuario.email == null || usuario.email.length > 50 ||
                 usuario.senha == undefined || usuario.senha == '' || usuario.senha == null || usuario.senha.length > 20 ||
                 usuario.biografia == undefined || usuario.biografia == '' || usuario.biografia == null || usuario.biografia.length > 200 ||
-                usuario.data_conta == undefined || usuario.data_conta == '' || usuario.data_conta == null || usuario.data_conta.length > 1 ||
                 usuario.foto_perfil == undefined || usuario.foto_perfil == '' || usuario.foto_perfil == null || usuario.foto_perfil > 1 ||
                 usuario.id_sexo == undefined || usuario.id_sexo == '' ||
                 usuario.id_nacionalidade == undefined || usuario.id_nacionalidade == ''
@@ -45,6 +44,7 @@ const inserirUsuario = async function(usuario, contentType){
             return MESSAGE.ERROR_CONTENT_TYPE //415
         }
     } catch (error) {
+        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 }
@@ -52,7 +52,7 @@ const inserirUsuario = async function(usuario, contentType){
 const listarUsuario = async function(){
     try {
         //objeto do tipo array pra utilizar no foreach para carregar os dados do usuario, nacionalidade e sexo
-        arrayUsuario = []
+        const arrayUsuario = []
 
         //objeto json
         let dadosUsuario = {}
@@ -89,6 +89,8 @@ const listarUsuario = async function(){
                 }
                 //adiciona o novo array de usuario no json pra retornar no app
                 dadosUsuario.usuario = arrayUsuario
+
+                return dadosUsuario
             }else{
                 return MESSAGE.ERROR_NOT_FOUND //404
             }
@@ -97,6 +99,7 @@ const listarUsuario = async function(){
         }
 
     } catch (error) {
+        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 }
@@ -110,7 +113,7 @@ const buscarUsuario = async function(id){
             return MESSAGE.ERROR_REQUIRE_FIELDS //400
         }else{
             let dadosUsuario = {}
-            let resultUsuario = await usuarioDAO.selectByIdUsuario(id)
+            let resultUsuario = await usuarioDAO.selectByIdUsuario(parseInt(id))
 
             if(resultUsuario != false || typeof(resultUsuario) == 'object'){
                 if(resultUsuario.length > 0){
@@ -139,6 +142,7 @@ const buscarUsuario = async function(id){
                 //adiciona o novo array de usuario no json pra retornar no app
                 dadosUsuario.usuario = arrayUsuario
 
+                return dadosUsuario
                 }else{
                     return MESSAGE.ERROR_NOT_FOUND //404
                 }
@@ -147,6 +151,7 @@ const buscarUsuario = async function(id){
             }
         }
     } catch (error) {
+        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 }
@@ -174,7 +179,7 @@ const atualizarUsuario = async function(usuario, id, contentType){
 
                 if(resultUsuario.status_code == 200){
                     //update
-                    usuario.id = id //adiciona o atributo id no json e e coloca o id da música que chegou na controller
+                    usuario.id = id //adiciona o atributo id no json e e coloca o id do usuario que chegou na controller
                     let result = await usuarioDAO.updateUsuario(usuario)
 
                     if(result){
@@ -220,6 +225,7 @@ const excluirUsuario = async function(id){
             }
         }
     } catch (error) {
+        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 }

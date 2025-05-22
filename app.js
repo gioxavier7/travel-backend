@@ -175,7 +175,7 @@ app.delete('/v1/diario-viagem/sexo/:id', cors(), async function(request, respons
     response.json(result)
 })
 
-//endpoint para retornar lista de sexos
+//endpoint para retornar lista de nacionalidade
 app.get('/v1/diario-viagem/nacionalidade', cors(), async function(request, response){
 
     //chama a função para retornar uma lista de usuario
@@ -185,7 +185,7 @@ app.get('/v1/diario-viagem/nacionalidade', cors(), async function(request, respo
     response.json(result)
 })
 
-//endpoint para buscar um sexo pelo id
+//endpoint para buscar um nacionalidade pelo id
 app.get('/v1/diario-viagem/nacionalidade/:id', cors(), async function(request, response){
 
     let idNacionalidade = request.params.id

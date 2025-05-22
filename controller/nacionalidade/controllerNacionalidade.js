@@ -52,7 +52,7 @@ const listarNacionalidade = async function(){
                 dadosNacionalidade.status = true
                 dadosNacionalidade.status_code = 200
                 dadosNacionalidade.item = resultNacionalidade.length
-                dadosNacionalidade.Nacionalidade = resultNacionalidade
+                dadosNacionalidade.nacionalidade = resultNacionalidade
                 return dadosNacionalidade //200
             }else{
                 return MESSAGE.ERROR_NOT_FOUND //404
@@ -79,7 +79,7 @@ const buscarNacionalidade = async function(id){
                 if(resultNacionalidade.length > 0){
                     dadosNacionalidade.status = true
                     dadosNacionalidade.status_code = 200
-                    dadosNacionalidade.Nacionalidade = resultNacionalidade
+                    dadosNacionalidade.nacionalidade = resultNacionalidade
                     return dadosNacionalidade //200
                 }else{
                     return MESSAGE.ERROR_NOT_FOUND //404
@@ -109,7 +109,7 @@ const atualizarNacionalidade = async function(nacionalidade, id, contentType){
 
                 if(resultNacionalidade.status_code == 200){
                     //update
-                    Nacionalidade.id = id //adiciona o atributo id no json e e coloca o id da Nacionalidade que chegou na controller
+                    nacionalidade.id = id //adiciona o atributo id no json e e coloca o id da Nacionalidade que chegou na controller
                     let result = await nacionalidadeDAO.updateNacionalidade(nacionalidade)
 
                     if(result){
@@ -122,7 +122,7 @@ const atualizarNacionalidade = async function(nacionalidade, id, contentType){
                 }else{
                     return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
                 }
-            }
+             }
         }else{
             return MESSAGE.ERROR_CONTENT_TYPE //415
         }
