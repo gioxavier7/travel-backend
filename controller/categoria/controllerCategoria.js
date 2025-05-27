@@ -1,31 +1,23 @@
-/**
-  * Objetivo: Controller responsável pela manipilação do CRUD de dados de Sexo
-  * Data: 24/04/2025
-  * Dev: Giovanna
-  * Versão: 1.0
-  */
-
 //import do arquivo de configurações de mensagens de status cpde
 const MESSAGE = require('../../modulo/config.js')
  
 //import do arquivo DAO de música para manipular o db
-const sexoDAO = require('../../model/dao/sexo.js')
+const categoriaDAO = require('../../mode/dao/categoria.js')
 const { json } = require('body-parser')
 
-//funcao pra inserir um novo Sexo
-const inserirSexo = async function(sexo, contentType){
+//funcao pra inserir uma nova categoria
+const inserirCategoria = async function(categoria, contentType){
     try {
         if(String(contentType).toLowerCase() == 'application/json')
         {
             if(
-                sexo.nome == undefined || sexo.nome == '' || sexo.nome == null || sexo.nome.length > 50 ||
-                sexo.sigla == undefined || sexo.sigla == '' || sexo.sigla == null || sexo.sigla.length > 50
-            ){
+                categoria.nome_categoria == undefined || categoria.nome_categoria == '' || categoria.nome_categoria == null || categoria.nome_categoria.length > 45
+                ){
                 return MESSAGE.ERROR_REQUIRE_FIELDS //400
             }else{
-                let resultSexo = await sexoDAO.insertSexo(sexo)
+                let resultCategoria = await categoriaDAO.insertCategoria(categoria)
 
-                if(resultSexo)
+                if(resultCategoria)
                     return MESSAGE.SUCCESS_CREATED_ITEM //201
                 else
                     return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
@@ -38,23 +30,23 @@ const inserirSexo = async function(sexo, contentType){
     }
 }
 
-//funcao pra listar todos as Sexo
-const listarSexo = async function(){
+//funcao pra listar todas as categorias
+const listarCategoria = async function(){
     try {
-        let dadosSexo = {}
+        let dadosCategoria = {}
 
-        //chamar a função que retorna os sexos
-        let resultSexo = await sexoDAO.selectAllSexo()
+        //chamar a função que retorna as categorias
+        let resultCategoria = await categoriaDAO.selectAllCategoria()
 
-        if(resultSexo != false || typeof(resultSexo) == 'object')
+        if(resultCategoria != false || typeof(resultCategoria) == 'object')
         {
-            //criando um objeto JSON para retornar a lista de Sexos
-            if(resultSexo.length > 0){
-                dadosSexo.status = true
-                dadosSexo.status_code = 200
-                dadosSexo.item = resultSexo.length
-                dadosSexo.sexo = resultSexo
-                return dadosSexo //200
+            //criando um objeto JSON para retornar a lista de categorias
+            if(resultCategoria.length > 0){
+                dadosCategoria.status = true
+                dadosCategoria.status_code = 200
+                dadosCategoria.item = resultCategoria.length
+                dadosCategoria.categoria = resultCategoria
+                return dadosCategoria //200
             }else{
                 return MESSAGE.ERROR_NOT_FOUND //404
             }
@@ -67,21 +59,21 @@ const listarSexo = async function(){
     }
 }
 
-//função para listar uma Sexo pelo ID
-const buscarSexo = async function(id){
+//função para listar uma categoria pelo ID
+const buscarCategoria = async function(id){
     try {
         if(id == '' || id == undefined || id == null || isNaN(id) || id <= 0){
             return MESSAGE.ERROR_REQUIRE_FIELDS //400
         }else{
-            let dadosSexo = {}
-            let resultSexo = await sexoDAO.selectByIdSexo(id)
+            let dadosCategoria = {}
+            let resultCategoria = await categoriaDAO.selectByIdCategoria(id)
 
-            if(resultSexo != false || typeof(resultSexo) == 'object'){
-                if(resultSexo.length > 0){
-                    dadosSexo.status = true
-                    dadosSexo.status_code = 200
-                    dadosSexo.sexo = resultSexo
-                    return dadosSexo //200
+            if(resultCategoria != false || typeof(resultCategoria) == 'object'){
+                if(resultCategoria.length > 0){
+                    dadosCategoria.status = true
+                    dadosCategoria.status_code = 200
+                    dadosCategoria.sexo = resultCategoria
+                    return dadosCategoria //200
                 }else{
                     return MESSAGE.ERROR_NOT_FOUND //404
                 }
@@ -94,31 +86,30 @@ const buscarSexo = async function(id){
     }
 }
 
-//função para atualizar uma Sexo existente
-const atualizarSexo = async function(sexo, id, contentType){
+const atualizarCategoria = async function(categoria, id, contentType){
     try {
         if(String(contentType).toLowerCase() == 'application/json')
         {
             if(
-                sexo.tipo == undefined || sexo.tipo == '' || sexo.tipo == null || sexo.tipo.length > 50 ||
+                categoria.nome_categoria == undefined || categoria.nome_categoria == '' || categoria.nome_categoria == null || categoria.nome_categoria.length > 50 ||
                 id == '' || id == undefined || id == null || isNaN(id) || id <= 0
             ){
                 return MESSAGE.ERROR_REQUIRE_FIELDS //400
             }else{
                 //validar se o id existe no db
-                let resultSexo = await buscarSexo(id)
+                let resultCategoria = await buscarCategoria(id)
 
-                if(resultSexo.status_code == 200){
+                if(resultCategoria.status_code == 200){
                     //update
-                    sexo.id = id //adiciona o atributo id no json e e coloca o id da Sexo que chegou na controller
-                    let result = await sexoDAO.updateSexo(sexo)
+                    categoria.id = id //adiciona o atributo id no json e e coloca o id da categoria que chegou na controller
+                    let result = await categoriaDAO.updateCategoria(categoria)
 
                     if(result){
                         return MESSAGE.SUCCESS_UPDATED_ITEM //200
                     }else{
                         return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
                     }
-                }else if(resultSexo.status_code == 404){
+                }else if(resultCategoria.status_code == 404){
                     return MESSAGE.ERROR_NOT_FOUND //404
                 }else{
                     return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
@@ -132,24 +123,24 @@ const atualizarSexo = async function(sexo, id, contentType){
     }
 }
 
-//função para excluir uma Sexo existente
-const excluirSexo = async function(id){
+//função para excluir uma categoria existente
+const excluirCategoria = async function(id){
     try {
         if(id == '' || id == undefined || id == null || isNaN(id) || id <= 0){
             return MESSAGE.ERROR_REQUIRE_FIELDS //400
         }else{
             //validar se o id existe
-            let resultSexo = await buscarSexo(id)
+            let resultCategoria = await buscarCategoria(id)
 
-            if(resultSexo.status_code == 200){
+            if(resultCategoria.status_code == 200){
                 //delete
-                let result = await sexoDAO.deleteSexo(id)
+                let result = await categoriaDAO.deleteCategoria(id)
                 if(result){
                     return MESSAGE.SUCCESS_DELETED_ITEM //200
                 }else{
                     return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
                 }
-            }else if(resultSexo.status_code == 404){
+            }else if(resultCategoria.status_code == 404){
                 return MESSAGE.ERROR_NOT_FOUND //404
             }else{
                 return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
@@ -160,10 +151,12 @@ const excluirSexo = async function(id){
     }
 }
 
+
+
 module.exports = {
-    inserirSexo,
-    listarSexo,
-    buscarSexo,
-    atualizarSexo,
-    excluirSexo
+    inserirCategoria,
+    listarCategoria,
+    buscarCategoria,
+    atualizarCategoria,
+    excluirCategoria
 }

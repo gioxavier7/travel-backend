@@ -8,7 +8,7 @@
 //import do arquivo de configurações de mensagens de status cpde
 const MESSAGE = require('../../modulo/config.js')
  
-//import do arquivo DAO de música para manipular o db
+//import do arquivo DAO de usuario para manipular o db
 const usuarioDAO = require('../../model/dao/usuario.js')
 const { json } = require('body-parser')
 

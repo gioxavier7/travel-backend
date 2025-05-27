@@ -31,6 +31,9 @@ const bodyParser = require('body-parser')
 const controllerUsuario = require('./controller/usuario/controllerUsuario.js')
 const controllerSexo = require('./controller/sexo/controllerSexo.js')
 const controllerNacionalidade = require('./controller/nacionalidade/controllerNacionalidade.js')
+const controllerCategoria = require('./controller/categoria/controllerCategoria')
+const controllerLocal = require('./controller/local/controllerLocal.js')
+
 
 //criando formato de dados que será recebido no body da requisição (POST/PUT)
 const bodyParserJSON = bodyParser.json()
@@ -207,6 +210,7 @@ app.get('/v1/diario-viagem/nacionalidade/:id', cors(), async function(request, r
 
 })
 
+//endpoint do login
 app.post('/v1/diario-viagem/login', cors(), bodyParserJSON, async (request, response) => {
     const { email, senha } = request.body;
 
@@ -216,6 +220,137 @@ app.post('/v1/diario-viagem/login', cors(), bodyParserJSON, async (request, resp
     response.json(result);
 });
 
+//endpoint para inserir um Local
+app.post('/v1/diario-viagem/local', cors(), bodyParserJSON, async function(request, response){
+
+    //recebe o content type da requisição para validar o formato de dados
+    let contentType = request.headers['content-type']
+
+    //recebe os dados encaminhados no body da requisição
+    let dadosBody = request.body
+
+    let result = await controllerLocal.inserirLocal(dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//endpoint para retornar lista de Local
+app.get('/v1/diario-viagem/local', cors(), async function(request, response){
+
+    //chama a função para retornar uma lista de Local
+    let result = await controllerLocal.listarLocal()
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//endpoint para buscar um Local pelo id
+app.get('/v1/diario-viagem/local/:id', cors(), async function(request, response){
+
+    let idLocal = request.params.id
+
+    let result = await controllerLocal.buscarLocal(idLocal)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+//endpoint pr atualizar um local
+app.put('/v1/diario-viagem/local/:id', cors(), bodyParserJSON, async function(request, response){
+    //recebe o content type da requisição
+    let contentType = request.headers['content-type']
+
+    //recebe o id da música
+    let idLocal = request.params.id
+
+    //recebe os dados do body
+    let dadosBody = request.body
+
+    let result = await controllerLocal.atualizarLocal(dadosBody, idLocal, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+// endpoint para deletar um local
+app.delete('/v1/diario-viagem/local/:id', cors(), async function(request, response){
+    let idLocal = request.params.id
+
+    let result = await controllerLocal.excluirLocal(idLocal)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//CATEGORIA
+
+//endpoint para inserir um sexo
+app.post('/v1/diario-viagem/categoria', cors(), bodyParserJSON, async function(request, response){
+
+    //recebe o content type da requisição para validar o formato de dados
+    let contentType = request.headers['content-type']
+
+    //recebe os dados encaminhados no body da requisição
+    let dadosBody = request.body
+
+    let result = await controllerCategoria.inserirCategoria(dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//endpoint para retornar lista de sexos
+app.get('/v1/diario-viagem/categoria', cors(), async function(request, response){
+
+    //chama a função para retornar uma lista de usuario
+    let result = await controllerCategoria.listarCategoria()
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//endpoint para buscar um sexo pelo id
+app.get('/v1/diario-viagem/categoria/:id', cors(), async function(request, response){
+
+    let idCategoria = request.params.id
+
+    let result = await controllerCategoria.buscarCategoria(idCategoria)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+//endpoint pr atualizar um sexo
+app.put('/v1/diario-viagem/categoria/:id', cors(), bodyParserJSON, async function(request, response){
+    //recebe o content type da requisição
+    let contentType = request.headers['content-type']
+
+    //recebe o id da música
+    let idCategoria = request.params.id
+
+    //recebe os dados do body
+    let dadosBody = request.body
+
+    let result = await controllerCategoria.atualizarCategoria(dadosBody, idCategoria, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+// endpoint para deletar um sexo
+app.delete('/v1/diario-viagem/categoria/:id', cors(), async function(request, response){
+    let idCategoria = request.params.id
+
+    let result = await controllerCategoria.excluirCategoria(idCategoria)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
 app.listen(8080, function(){
     console.log('Servidor aguardando novas requisições...')
 })
+
