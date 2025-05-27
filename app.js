@@ -206,6 +206,15 @@ app.get('/v1/diario-viagem/nacionalidade/:id', cors(), async function(request, r
 
 })
 
+app.post('/v1/diario-viagem/login', cors(), bodyParserJSON, async (request, response) => {
+    const { email, senha } = request.body;
+
+    const result = await controllerUsuario.loginUsuario(email, senha);
+
+    response.status(result.status_code);
+    response.json(result);
+});
+
 app.listen(8080, function(){
     console.log('Servidor aguardando novas requisições...')
 })

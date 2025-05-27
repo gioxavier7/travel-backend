@@ -14,34 +14,32 @@ const prisma = new PrismaClient()
 //função para inserir um novo usuário
 const insertUsuario = async function(usuario){
     try {
-        let sql = `insert into tbl_usuario (
-                                            nome,
-                                            username,
-                                            email,
-                                            senha,
-                                            biografia,
-                                            foto_perfil,
-                                            palavra_chave,
-                                            id_sexo,
-                                            id_nacionalidade
-                                        )
-                                    values (
-                                            '${usuario.nome}',
-                                            '${usuario.username}',
-                                            '${usuario.email}',
-                                            '${usuario.senha}',
-                                            '${usuario.biografia}',
-                                            '${usuario.foto_perfil}',
-                                            '${usuario.palavra_chave}',
-                                            '${usuario.id_sexo}',
-                                            '${usuario.id_nacionalidade}'
-                                            )`
+        let sql = `INSERT INTO tbl_usuario (
+                        nome,
+                        username,
+                        email,
+                        senha,
+                        biografia,
+                        foto_perfil,
+                        palavra_chave,
+                        id_sexo,
+                        id_nacionalidade
+                    ) VALUES (
+                        '${usuario.nome}',
+                        '${usuario.username}',
+                        '${usuario.email}',
+                        '${usuario.senha}',
+                        ${usuario.biografia ? `'${usuario.biografia}'` : null},
+                        ${usuario.foto_perfil ? `'${usuario.foto_perfil}'` : null},
+                        '${usuario.palavra_chave}',
+                        ${usuario.id_sexo ? usuario.id_sexo : null},
+                        ${usuario.id_nacionalidade ? usuario.id_nacionalidade : null}
+                    )`
 
-        //executa o script sql do banco de dados e aguarda o retorno 
-        let result  = await prisma .$executeRawUnsafe(sql)
+        let result = await prisma.$executeRawUnsafe(sql)
 
         if(result)
-            return true
+            return result
         else
             return false
 
@@ -147,6 +145,18 @@ const atualizarSenha = async function(email, novaSenha) {
     return result ? true : false
 }
 
+// Buscar usuário pelo email
+const selectByEmail = async (email) => {
+    try {
+        const sql = `SELECT * FROM tbl_usuario WHERE email = '${email}'`;
+        const result = await prisma.$queryRawUnsafe(sql);
+        return result.length > 0 ? result[0] : false;
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+};
+
 
 
 module.exports = {
@@ -156,5 +166,6 @@ module.exports = {
     selectAllUsuario,
     selectByIdUsuario,
     verificarEmailEPalavra,
-    atualizarSenha
+    atualizarSenha,
+    selectByEmail
 }

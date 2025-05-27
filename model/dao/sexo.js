@@ -32,6 +32,7 @@ const insertSexo = async function(sexo){
             return false
 
     } catch (error) {
+        console.log(error);
         return false
     }
 }

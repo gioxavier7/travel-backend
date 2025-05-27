@@ -16,37 +16,41 @@ const { json } = require('body-parser')
 const controllerSexo = require('../../controller/sexo/controllerSexo.js')
 const controllerNacionalidade = require('../../controller/nacionalidade/controllerNacionalidade.js')
 
-//funcao pra inserir um novo usuário
-const inserirUsuario = async function(usuario, contentType){
+// função para inserir um novo usuário
+const inserirUsuario = async function (usuario, contentType) {
     try {
-        if(String(contentType).toLowerCase() == 'application/json')
-        {
-            if(
-                usuario.nome == undefined || usuario.nome == '' || usuario.nome == null || usuario.nome.length > 50 ||
-                usuario.username == undefined || usuario.username == '' || usuario.username == null || usuario.username.length > 50 ||
-                usuario.email == undefined || usuario.email == '' || usuario.email == null || usuario.email.length > 50 ||
-                usuario.senha == undefined || usuario.senha == '' || usuario.senha == null || usuario.senha.length > 20 ||
-                usuario.biografia == undefined || usuario.biografia.length > 200 ||
-                usuario.foto_perfil == undefined || usuario.foto_perfil > 250 ||
-                usuario.palavra_chave == undefined || usuario.palavra_chave == '' || usuario.palavra_chave == null || usuario.palavra_chave.length > 100 ||
-                usuario.id_sexo == undefined || usuario.id_sexo == '' ||
-                usuario.id_nacionalidade == undefined || usuario.id_nacionalidade == ''
-            ){
-                return MESSAGE.ERROR_REQUIRE_FIELDS //400
-            }else{
-                let resultUsuario = await usuarioDAO.insertUsuario(usuario)
-
-                if(resultUsuario)
-                    return MESSAGE.SUCCESS_CREATED_ITEM //201
-                else
-                    return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
+        if (String(contentType).toLowerCase() === 'application/json') {
+            // Verificações dos campos obrigatórios
+            if (
+                !usuario.nome || usuario.nome.length > 50 ||
+                !usuario.username || usuario.username.length > 50 ||
+                !usuario.email || usuario.email.length > 50 ||
+                !usuario.senha || usuario.senha.length > 20 ||
+                !usuario.palavra_chave || usuario.palavra_chave.length > 100
+            ) {
+                return MESSAGE.ERROR_REQUIRE_FIELDS; // 400
             }
-        }else{
-            return MESSAGE.ERROR_CONTENT_TYPE //415
+
+            // Verificações dos campos opcionais (só verifica o tamanho se o campo existir)
+            if (
+                (usuario.biografia && usuario.biografia.length > 200) ||
+                (usuario.foto_perfil && usuario.foto_perfil.length > 200)
+            ) {
+                return MESSAGE.ERROR_REQUIRE_FIELDS; // 400
+            }
+
+            let resultUsuario = await usuarioDAO.insertUsuario(usuario);
+
+            if (resultUsuario)
+                return MESSAGE.SUCCESS_CREATED_ITEM; // 201
+            else
+                return MESSAGE.ERROR_INTERNAL_SERVER_MODEL; // 500
+        } else {
+            return MESSAGE.ERROR_CONTENT_TYPE; // 415
         }
     } catch (error) {
         console.log(error);
-        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
+        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER; // 500
     }
 }
 
@@ -255,6 +259,44 @@ const recuperarSenha = async function(dados) {
     }
 }
 
+const loginUsuario = async (email, senha) => {
+    try {
+        if (!email || !senha) {
+            return MESSAGE.ERROR_REQUIRE_FIELDS; // 400
+        }
+
+        const usuario = await usuarioDAO.selectByEmail(email);
+
+        if (!usuario) {
+            return {
+                status_code: 401,
+                message: 'Email não encontrado.'
+            };
+        }
+
+        if (usuario.senha !== senha) {
+            return {
+                status_code: 401,
+                message: 'Senha incorreta.'
+            };
+        }
+
+        return {
+            status_code: 200,
+            message: 'Login realizado com sucesso.',
+            usuario: {
+                id: usuario.id,
+                nome: usuario.nome,
+                email: usuario.email,
+                username: usuario.username
+            }
+        };
+    } catch (error) {
+        console.log(error);
+        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER; // 500
+    }
+};
+
 
 module.exports = {
     inserirUsuario,
@@ -262,5 +304,6 @@ module.exports = {
     buscarUsuario,
     atualizarUsuario,
     excluirUsuario,
-    recuperarSenha
+    recuperarSenha,
+    loginUsuario
 }
