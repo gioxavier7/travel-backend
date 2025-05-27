@@ -44,6 +44,7 @@ const insertUsuario = async function(usuario){
             return false
 
     } catch (error) {
+        console.log(error);
         return false
     }
 }
@@ -152,7 +153,6 @@ const selectByEmail = async (email) => {
         const result = await prisma.$queryRawUnsafe(sql);
         return result.length > 0 ? result[0] : false;
     } catch (error) {
-        console.log(error);
         return false;
     }
 };

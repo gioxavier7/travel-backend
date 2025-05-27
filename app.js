@@ -101,6 +101,7 @@ app.put('/v1/diario-viagem/usuario/:id', cors(), bodyParserJSON, async function(
     response.json(result)
 })
 
+//recuperar senha
 app.post('/v1/diario-viagem/usuario/recuperar-senha', cors(), bodyParserJSON, async (request, response) => {
     let dados = request.body
     let result = await controllerUsuario.recuperarSenha(dados)
@@ -157,7 +158,7 @@ app.get('/v1/diario-viagem/sexo/:id', cors(), async function(request, response){
 
 })
 
-//endpoint pr atualizar um usuário
+//endpoint pr atualizar um sexo
 app.put('/v1/diario-viagem/sexo/:id', cors(), bodyParserJSON, async function(request, response){
     //recebe o content type da requisição
     let contentType = request.headers['content-type']
@@ -174,7 +175,7 @@ app.put('/v1/diario-viagem/sexo/:id', cors(), bodyParserJSON, async function(req
     response.json(result)
 })
 
-// endpoint para deletar um usuário
+// endpoint para deletar um sexo
 app.delete('/v1/diario-viagem/sexo/:id', cors(), async function(request, response){
     let idSexo = request.params.id
 

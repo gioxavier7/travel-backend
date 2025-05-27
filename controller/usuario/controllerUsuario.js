@@ -31,7 +31,7 @@ const inserirUsuario = async function (usuario, contentType) {
                 return MESSAGE.ERROR_REQUIRE_FIELDS; // 400
             }
 
-            // Verificações dos campos opcionais (só verifica o tamanho se o campo existir)
+            // verificações dos campos opcionais (só verifica o tamanho se o campo existir)
             if (
                 (usuario.biografia && usuario.biografia.length > 200) ||
                 (usuario.foto_perfil && usuario.foto_perfil.length > 200)
@@ -238,10 +238,10 @@ const excluirUsuario = async function(id){
 
 const recuperarSenha = async function(dados) {
     try {
-        if (!dados.email || !dados.palavra_recuperacao || !dados.nova_senha)
+        if (!dados.email || !dados.palavra_chave || !dados.nova_senha)
             return MESSAGE.ERROR_REQUIRE_FIELDS
 
-        let usuarioValido = await usuarioDAO.verificarEmailEPalavra(dados.email, dados.palavra_recuperacao)
+        let usuarioValido = await usuarioDAO.verificarEmailEPalavra(dados.email, dados.palavra_chave)
 
         if (!usuarioValido)
             return MESSAGE.ERROR_INVALID_USER 
