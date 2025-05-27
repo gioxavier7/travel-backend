@@ -2,36 +2,109 @@ create database db_diario_viagem_b;
 
 use db_diario_viagem_b;
 
-create table tbl_usuario(
-    id int primary key auto_increment,
-    nome varchar(50) not null,
-    username varchar(50) not null unique,
-    email varchar(50) not null unique,
-    senha varchar(20) not null,
-    biografia varchar(200),
-    data_conta timestamp default current_timestamp,
-    palavra_chave varchar(100) not null,
-    foto_perfil varchar(200),
-    id_sexo int,
-    id_nacionalidade int,
-    foreign key(id_sexo) references tbl_sexo(id),
-    foreign key(id_nacionalidade) references tbl_nacionalidade(id)
+-- Tabela de usuários
+CREATE TABLE tbl_usuario (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome_completo VARCHAR(50),
+    nome_perfil VARCHAR(26),
+    email VARCHAR(80) UNIQUE,
+    senha VARCHAR(20),
+    biografia VARCHAR(200),
+    foto_perfil VARCHAR(300),
+    data_conta DATE DEFAULT CURRENT_DATE,
+    id_sexo INT,
+    id_nacionalidade INT,
+    FOREIGN KEY (id_sexo) REFERENCES tbl_sexo(id),
+    FOREIGN KEY (id_nacionalidade) REFERENCES tbl_nacionalidade(id)
 );
 
-drop table tbl_usuario;
-drop table tbl_sexo;
-drop table tbl_nacionalidade;
-
-create table tbl_sexo(
-    id int primary key auto_increment,
-    nome varchar(20) not null unique,
-    sigla varchar(1) not null unique
+-- Tabela de sexo
+CREATE TABLE tbl_sexo (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(20)
 );
 
-create table tbl_nacionalidade(
-    id int primary key auto_increment,
-    pais varchar(80) not null unique,
-    sigla varchar(3) not null unique
+-- Tabela de nacionalidades
+CREATE TABLE tbl_nacionalidade (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(70),
+    sigla VARCHAR(3)
+);
+
+-- Tabela de categorias
+CREATE TABLE tbl_categoria (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome_categoria VARCHAR(45)
+);
+
+-- Tabela de locais
+CREATE TABLE tbl_local (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    endereco VARCHAR(200),
+    latitude INT,
+    longitude INT
+);
+
+-- Tabela de viagens
+CREATE TABLE tbl_viagem (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario INT NOT NULL,
+    titulo VARCHAR(45),
+    descricao VARCHAR(420),
+    data_inicio DATE,
+    data_fim DATE,
+    visibilidade VARCHAR(30),
+    data_criacao DATE DEFAULT CURRENT_DATE,
+    nota DOUBLE,
+    FOREIGN KEY (id_usuario) REFERENCES tbl_usuario(id)
+);
+
+-- Tabela de mídias (fotos/vídeos da viagem)
+CREATE TABLE tbl_midia (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    tipo VARCHAR(20), -- exemplo: 'foto', 'vídeo'
+    url VARCHAR(250),
+    tbl_viagem_id INT,
+    FOREIGN KEY (tbl_viagem_id) REFERENCES tbl_viagem(id)
+);
+
+-- Tabela de relacionamento entre viagem e local
+CREATE TABLE tbl_viagem_local (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_local INT,
+    id_viagem INT,
+    FOREIGN KEY (id_local) REFERENCES tbl_local(id),
+    FOREIGN KEY (id_viagem) REFERENCES tbl_viagem(id)
+);
+
+-- Tabela de relacionamento entre viagem e categoria
+CREATE TABLE tbl_categoria_viagem (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_categoria INT,
+    id_viagem INT,
+    FOREIGN KEY (id_categoria) REFERENCES tbl_categoria(id),
+    FOREIGN KEY (id_viagem) REFERENCES tbl_viagem(id)
+);
+
+-- Tabela de comentários
+CREATE TABLE tbl_comentario (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    texto VARCHAR(250),
+    data DATETIME DEFAULT CURRENT_TIMESTAMP,
+    id_usuario INT,
+    id_viagem INT,
+    FOREIGN KEY (id_usuario) REFERENCES tbl_usuario(id),
+    FOREIGN KEY (id_viagem) REFERENCES tbl_viagem(id)
+);
+
+-- Tabela de viagens salvas
+CREATE TABLE tbl_viagem_salva (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_viagem_id INT,
+    tbl_usuario_id INT,
+    data DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_viagem_id) REFERENCES tbl_viagem(id),
+    FOREIGN KEY (tbl_usuario_id) REFERENCES tbl_usuario(id)
 );
 
 INSERT INTO tbl_nacionalidade (pais, sigla) VALUES
