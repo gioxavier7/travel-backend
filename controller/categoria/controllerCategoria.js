@@ -2,7 +2,7 @@
 const MESSAGE = require('../../modulo/config.js')
  
 //import do arquivo DAO de música para manipular o db
-const categoriaDAO = require('../../mode/dao/categoria.js')
+const categoriaDAO = require('../../model/dao/categoria.js')
 const { json } = require('body-parser')
 
 //funcao pra inserir uma nova categoria
@@ -36,7 +36,7 @@ const listarCategoria = async function(){
         let dadosCategoria = {}
 
         //chamar a função que retorna as categorias
-        let resultCategoria = await categoriaDAO.selectAllCategoria()
+        let resultCategoria = await categoriaDAO.selectAllCategorias()
 
         if(resultCategoria != false || typeof(resultCategoria) == 'object')
         {
@@ -55,6 +55,7 @@ const listarCategoria = async function(){
         }
 
     } catch (error) {
+        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 }

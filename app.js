@@ -50,6 +50,8 @@ app.use((request, response, next)=>{
     next()
 })
 
+/* ---------- USUARIO ---------- */
+
 //endpoint para inserir um usuario
 app.post('/v1/diario-viagem/usuario', cors(), bodyParserJSON, async function(request, response){
 
@@ -124,6 +126,8 @@ app.delete('/v1/diario-viagem/usuario/:id', cors(), async function(request, resp
     response.json(result)
 })
 
+/* ---------- SEXO ---------- */
+
 //endpoint para inserir um sexo
 app.post('/v1/diario-viagem/sexo', cors(), bodyParserJSON, async function(request, response){
 
@@ -188,6 +192,8 @@ app.delete('/v1/diario-viagem/sexo/:id', cors(), async function(request, respons
     response.json(result)
 })
 
+/* ---------- NACIONALIDADE ---------- */
+
 //endpoint para retornar lista de nacionalidade
 app.get('/v1/diario-viagem/nacionalidade', cors(), async function(request, response){
 
@@ -210,6 +216,8 @@ app.get('/v1/diario-viagem/nacionalidade/:id', cors(), async function(request, r
 
 })
 
+/* ---------- LOGIN ---------- */
+
 //endpoint do login
 app.post('/v1/diario-viagem/login', cors(), bodyParserJSON, async (request, response) => {
     const { email, senha } = request.body;
@@ -219,6 +227,8 @@ app.post('/v1/diario-viagem/login', cors(), bodyParserJSON, async (request, resp
     response.status(result.status_code);
     response.json(result);
 });
+
+/* ---------- LOCAL ---------- */
 
 //endpoint para inserir um Local
 app.post('/v1/diario-viagem/local', cors(), bodyParserJSON, async function(request, response){
@@ -284,9 +294,9 @@ app.delete('/v1/diario-viagem/local/:id', cors(), async function(request, respon
     response.json(result)
 })
 
-//CATEGORIA
+/* ---------- CATEGORIA ---------- */
 
-//endpoint para inserir um sexo
+//endpoint para inserir um categoria
 app.post('/v1/diario-viagem/categoria', cors(), bodyParserJSON, async function(request, response){
 
     //recebe o content type da requisição para validar o formato de dados
@@ -301,7 +311,7 @@ app.post('/v1/diario-viagem/categoria', cors(), bodyParserJSON, async function(r
     response.json(result)
 })
 
-//endpoint para retornar lista de sexos
+//endpoint para retornar lista de categorias
 app.get('/v1/diario-viagem/categoria', cors(), async function(request, response){
 
     //chama a função para retornar uma lista de usuario
@@ -311,7 +321,7 @@ app.get('/v1/diario-viagem/categoria', cors(), async function(request, response)
     response.json(result)
 })
 
-//endpoint para buscar um sexo pelo id
+//endpoint para buscar um categoria pelo id
 app.get('/v1/diario-viagem/categoria/:id', cors(), async function(request, response){
 
     let idCategoria = request.params.id
@@ -323,7 +333,7 @@ app.get('/v1/diario-viagem/categoria/:id', cors(), async function(request, respo
 
 })
 
-//endpoint pr atualizar um sexo
+//endpoint pr atualizar um categoria
 app.put('/v1/diario-viagem/categoria/:id', cors(), bodyParserJSON, async function(request, response){
     //recebe o content type da requisição
     let contentType = request.headers['content-type']
@@ -340,7 +350,7 @@ app.put('/v1/diario-viagem/categoria/:id', cors(), bodyParserJSON, async functio
     response.json(result)
 })
 
-// endpoint para deletar um sexo
+// endpoint para deletar um categoria
 app.delete('/v1/diario-viagem/categoria/:id', cors(), async function(request, response){
     let idCategoria = request.params.id
 

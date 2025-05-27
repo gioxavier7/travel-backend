@@ -64,8 +64,8 @@ const selectByIdCategoria = async function(id){
 
 const updateCategoria = async function(categoria){
     try {
-        let sql = `update into tbl_categoria set nome_categoria = '${categoria.nome_categoria}',
-                                                    where id=${categoria.id}`
+        let sql = `UPDATE tbl_categoria SET nome_categoria = '${categoria.nome_categoria}' WHERE id = ${categoria.id}`
+
 
         let result = await prisma.$executeRawUnsafe(sql)
 
@@ -75,6 +75,7 @@ const updateCategoria = async function(categoria){
             return false
 
     } catch (error) {
+        console.log(error);
         return false
     }
 

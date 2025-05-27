@@ -2,6 +2,7 @@ create database db_diario_viagem_b;
 
 use db_diario_viagem_b;
 
+/* ---------- USUARIO ---------- */
 create table tbl_usuario(
     id int primary key auto_increment,
     nome varchar(50) not null,
@@ -22,28 +23,51 @@ drop table tbl_usuario;
 drop table tbl_sexo;
 drop table tbl_nacionalidade;
 
+/* ---------- SEXO ---------- */
 create table tbl_sexo(
     id int primary key auto_increment,
     nome varchar(20) not null unique,
     sigla varchar(1) not null unique
 );
 
+/* ---------- NACIONALIDADE ---------- */
 create table tbl_nacionalidade(
     id int primary key auto_increment,
     pais varchar(80) not null unique,
     sigla varchar(3) not null unique
 );
 
-CREATE TABLE tbl_viagem (
+/* ---------- CATEGORIA ---------- */
+create table tbl_categoria(
+    id int primary key auto_increment,
+    nome_categoria varchar(45) not null
+)
+
+/* ---------- LOCAL ---------- */
+CREATE TABLE tbl_local (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    titulo VARCHAR(100) NOT NULL,
-    descricao TEXT,
-    data_inicio DATE NOT NULL,
-    data_fim DATE NOT NULL,
-    id_usuario INT NOT NULL,
-    id_categoria INT NOT NULL,
-    FOREIGN KEY (id_usuario) REFERENCES tbl_usuario(id),
-    FOREIGN KEY (id_categoria) REFERENCES tbl_categoria_viagem(id)
+    nome VARCHAR(100) NOT NULL, 
+    latitude DECIMAL(10, 8),   
+    longitude DECIMAL(11, 8),
+    pais VARCHAR(100),      
+    estado VARCHAR(100),       
+    cidade VARCHAR(100)        
+);
+
+
+/* ---------- VIAGEM ---------- */
+
+CREATE TABLE tbl_viagem (
+    id           INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario   INT NOT NULL,          -- dono da viagem
+    titulo       VARCHAR(45)  NOT NULL,
+    descricao    VARCHAR(420),
+    data_inicio  DATE         NOT NULL,
+    data_fim     DATE         NOT NULL,
+    visibilidade ENUM('publica','privada','amigos') DEFAULT 'publica',
+    data_criacao DATE DEFAULT CURRENT_DATE,
+    nota         DOUBLE,
+    FOREIGN KEY (id_usuario) REFERENCES tbl_usuario(id)
 );
 
 
