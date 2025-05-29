@@ -116,7 +116,10 @@ const atualizarLocal = async function(local, id, contentType){
         if(String(contentType).toLowerCase() == 'application/json')
         {
             if(
-                local.tipo == undefined || local.tipo == '' || local.tipo == null || local.tipo.length > 50 ||
+                local.nome == undefined || local.nome == '' || local.nome == null || local.nome.length > 50 ||
+                local.cidade == undefined || local.cidade == '' || local.cidade == null || local.cidade.length > 50 ||
+                local.estado == undefined || local.estado == '' || local.estado == null || local.estado.length > 50 ||
+                local.pais == undefined || local.pais == '' || local.pais == null || local.pais.length > 50 ||
                 id == '' || id == undefined || id == null || isNaN(id) || id <= 0
             ){
                 return MESSAGE.ERROR_REQUIRE_FIELDS //400

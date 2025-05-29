@@ -10,7 +10,7 @@ const prisma = new PrismaClient()
 const insertCategoriaViagem = async function(CategoriaViagem){
 try {
 
-    let sql = `insert into tbl_viagem_local  ( 
+    let sql = `insert into tbl_categoria_viagem  ( 
                                         id_categoria,
                                         id_viagem
                                       ) 
@@ -40,7 +40,7 @@ const selectAllCategoriaViagem = async function(){
 
   try {
     //ScriptSQL para retornar todos os dados
-    let sql = 'select * from tbl_viagem_local order by id desc'
+    let sql = 'select * from tbl_categoria_viagem order by id desc'
 
     //Executa o scriptSQL no BD e aguarda o retorno dos dados
     let result = await prisma.$queryRawUnsafe(sql)
@@ -58,7 +58,7 @@ const selectAllCategoriaViagem = async function(){
 
 const selectByIdCategoriaViagem = async function(id){
   try {
-    let sql = `select * from tbl_viagem_local where id = ${id}`
+    let sql = `select * from tbl_categoria_viagem where id = ${id}`
 
     let result = await prisma.$queryRawUnsafe(sql)
 
@@ -75,7 +75,7 @@ const selectByIdCategoriaViagem = async function(id){
 
 const updateCategoriaViagem = async function(CategoriaViagem){
   try {
-      let sql = `update tbl_viagem_local set        id_categoria       = ${CategoriaViagem.id_categoria},
+      let sql = `update tbl_categoria_viagem set        id_categoria       = ${CategoriaViagem.id_categoria},
                                                     id_viagem      = ${CategoriaViagem.id_viagem}
                                         
                             where id = ${CategoriaViagem.id}                
@@ -95,7 +95,7 @@ const updateCategoriaViagem = async function(CategoriaViagem){
 
 const deleteCategoriaViagem = async function(id){
   try {
-    let sql = `delete from tbl_viagem_local where id = ${id}`
+    let sql = `delete from tbl_categoria_viagem where id = ${id}`
 
     let result = await prisma.$executeRawUnsafe(sql)
 
@@ -110,49 +110,52 @@ const deleteCategoriaViagem = async function(id){
   }
 }
 
-const selectLocalByIdViagem = async function(idViagem){
+const selectCategoriaByIdViagem = async function(idViagem) {
   try {
-      let sql = `select tbl_viagem.* from tbl_local
-                          inner join tbl_viagem_local
-                            on tbl_viagem.id = tbl_viagem_local.id_viagem
-                          inner join tbl_local
-                            on tbl_local.id = tbl_viagem_local.id_categoria
-                      where tbl_viagem.id = ${idViagem}`
+    // SQL para buscar todas as categorias vinculadas a uma viagem específica
+    let sql = `SELECT tbl_categoria.* 
+               FROM tbl_categoria_viagem
+               INNER JOIN tbl_categoria
+                 ON tbl_categoria.id = tbl_categoria_viagem.id_categoria
+               WHERE tbl_categoria_viagem.id_viagem = ${idViagem}`;
 
-      let result = await prisma.$queryRawUnsafe(sql)
+    let result = await prisma.$queryRawUnsafe(sql);
 
-      if (result)
-        return result
-      else 
-        return false
+    if (result)
+      return result;
+    else
+      return false;
 
   } catch (error) {
-    console.log(error)
-    return false
+    console.log(error);
+    return false;
   }
 }
 
-const selectViagemByIdLocal = async function(idLocal){
+const selectViagemByIdCategoria = async function(idCategoria) {
   try {
-      let sql = `select tbl_local.* from tbl_viagem
-                          inner join tbl_viagem_local
-                            on tbl_local.id = tbl_viagem_local.id_categoria
-                          inner join tbl_local
-                            on tbl_viagem.id = tbl_viagem_local.id_viagem
-                      where tbl_local.id = ${idLocal}`
+    // SQL para buscar todas as viagens vinculadas a uma categoria específica
+    let sql = `SELECT tbl_viagem.* 
+               FROM tbl_categoria_viagem
+               INNER JOIN tbl_viagem
+                 ON tbl_viagem.id = tbl_categoria_viagem.id_viagem
+               WHERE tbl_categoria_viagem.id_categoria = ${idCategoria}`;
 
-      let result = await prisma.$queryRawUnsafe(sql)
+    let result = await prisma.$queryRawUnsafe(sql);
 
-      if (result)
-        return result
-      else 
-        return false
+    if (result)
+      return result;
+    else
+      return false;
 
   } catch (error) {
-    console.log(error)
-    return false
+    console.log(error);
+    return false;
   }
 }
+
+
+
 
 
 module.exports = {
@@ -161,6 +164,6 @@ module.exports = {
   selectByIdCategoriaViagem,
   updateCategoriaViagem,
   deleteCategoriaViagem,
-  selectLocalByIdViagem,
-  selectViagemByIdLocal
+  selectCategoriaByIdViagem,
+  selectViagemByIdCategoria
 }

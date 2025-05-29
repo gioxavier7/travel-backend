@@ -14,7 +14,8 @@ const { json } = require('body-parser')
 
 //Import das controlleres para criar as relações com usuario
 const controllerUsuario = require('../usuario/controllerUsuario.js')
-const controllerViagemLocal = require('../viagem/controllerViagemLocal.js');
+const controllerViagemLocal = require('../viagem/controllerViagemLocal.js')
+const controllerCategoriaViagem = require('../viagem/controllerCategoriaViagem.js')
 
 
 // função para inserir uma nova viagem
@@ -32,20 +33,24 @@ const inserirViagem = async function (viagem, contentType) {
                 return MESSAGE.ERROR_REQUIRE_FIELDS; // 400
             }
 
-            // vrificação dos campos opcionais
+            // Verificação de campos opcionais
             if (viagem.descricao && viagem.descricao.length > 200) {
                 return MESSAGE.ERROR_REQUIRE_FIELDS; // 400
             }
 
-            // pega e remove os locais antes de inserir a viagem
+            // Pega e remove os locais antes de inserir a viagem
             const locais = viagem.locais;
             delete viagem.locais;
+
+            // Pega e remove as categorias antes de inserir a viagem
+            const categorias = viagem.categorias;
+            delete viagem.categorias;
 
             // Insere a viagem no banco
             let resultViagem = await viagemDAO.insertViagem(viagem);
 
             if (resultViagem) {
-                // verifica se há locais para vincular
+                // Vincula os locais
                 if (locais && Array.isArray(locais)) {
                     for (let id_local of locais) {
                         const relacao = {
@@ -53,6 +58,17 @@ const inserirViagem = async function (viagem, contentType) {
                             id_local: id_local
                         };
                         await controllerViagemLocal.inserirViagemLocal(relacao, contentType);
+                    }
+                }
+
+                // Vincula as categorias
+                if (categorias && Array.isArray(categorias)) {
+                    for (let id_categoria of categorias) {
+                        const relacao = {
+                            id_viagem: resultViagem.id,
+                            id_categoria: id_categoria
+                        };
+                        await controllerCategoriaViagem.inserirCategoriaViagem(relacao, contentType);
                     }
                 }
 
@@ -76,27 +92,25 @@ const listarViagem = async function(){
 
         let resultViagem = await viagemDAO.selectAllViagem();
 
-        if(resultViagem != false || typeof(resultViagem) == 'object') {
-            if(resultViagem.length > 0){
+        if (resultViagem != false || typeof(resultViagem) == 'object') {
+            if (resultViagem.length > 0) {
                 dadosViagem.status = true;
                 dadosViagem.status_code = 200;
                 dadosViagem.item = resultViagem.length;
 
-                for (itemViagem of resultViagem) {
-                    // buscar o usuário relacionado
+                for (let itemViagem of resultViagem) {
+                    // Buscar o usuário relacionado
                     let dadosUsuario = await controllerUsuario.buscarUsuario(itemViagem.id_usuario);
                     itemViagem.usuario = dadosUsuario.usuario;
                     delete itemViagem.id_usuario;
 
-                    // buscar os locais relacionados à viagem
+                    // Buscar os locais relacionados à viagem
                     let dadosLocais = await controllerViagemLocal.buscarLocalPorViagem(itemViagem.id);
-                    
-                    // se locais existirem, adiciona no itemViagem
-                    if (dadosLocais.status && Array.isArray(dadosLocais.data)) {
-                        itemViagem.locais = dadosLocais.data;
-                    } else {
-                        itemViagem.locais = [] // array vazio se não houver locais
-                    }
+                    itemViagem.locais = (dadosLocais.status && Array.isArray(dadosLocais.data)) ? dadosLocais.data : [];
+
+                    // Buscar as categorias relacionadas à viagem
+                    let dadosCategorias = await controllerCategoriaViagem.buscarCategoriaPorViagem(itemViagem.id);
+                    itemViagem.categorias = (dadosCategorias.status && Array.isArray(dadosCategorias.data)) ? dadosCategorias.data : [];
 
                     arrayViagem.push(itemViagem);
                 }
@@ -116,6 +130,7 @@ const listarViagem = async function(){
     }
 }
 
+
 const buscarViagem = async function(id){
   try {
       let arrayViagem = []
@@ -127,13 +142,13 @@ const buscarViagem = async function(id){
       }else{
           let resultViagem = await viagemDAO.selectByIdViagem(parseInt(id))
 
-          if(resultViagem != false || typeof(resultViagem) == 'object') {
-            if(resultViagem.length > 0){
+          if (resultViagem != false || typeof(resultViagem) == 'object') {
+            if (resultViagem.length > 0) {
                 dadosViagem.status = true;
                 dadosViagem.status_code = 200;
                 dadosViagem.item = resultViagem.length;
 
-                for (itemViagem of resultViagem) {
+                for (let itemViagem of resultViagem) {
                     // Buscar o usuário relacionado
                     let dadosUsuario = await controllerUsuario.buscarUsuario(itemViagem.id_usuario);
                     itemViagem.usuario = dadosUsuario.usuario;
@@ -141,13 +156,11 @@ const buscarViagem = async function(id){
 
                     // Buscar os locais relacionados à viagem
                     let dadosLocais = await controllerViagemLocal.buscarLocalPorViagem(itemViagem.id);
-                    
-                    // Se locais existirem, adiciona no itemViagem
-                    if (dadosLocais.status && Array.isArray(dadosLocais.data)) {
-                        itemViagem.locais = dadosLocais.data;
-                    } else {
-                        itemViagem.locais = [] // array vazio se não houver locais
-                    }
+                    itemViagem.locais = (dadosLocais.status && Array.isArray(dadosLocais.data)) ? dadosLocais.data : [];
+
+                    // Buscar as categorias relacionadas à viagem
+                    let dadosCategorias = await controllerCategoriaViagem.buscarCategoriaPorViagem(itemViagem.id);
+                    itemViagem.categorias = (dadosCategorias.status && Array.isArray(dadosCategorias.data)) ? dadosCategorias.data : [];
 
                     arrayViagem.push(itemViagem);
                 }
@@ -194,18 +207,33 @@ const atualizarViagem = async function(viagem, id, contentType) {
           let result = await viagemDAO.updateViagem(viagem);
   
           if (result) {
-            // Se o cliente enviou locais para atualizar os locais relacionados
+            // Atualiza locais relacionados, se enviados
             if (viagem.locais && Array.isArray(viagem.locais)) {
-              // Primeiro, remove todos os locais vinculados atualmente a essa viagem
-              await controllerViagemLocal.deletarLocaisPorViagem(id);
+              // Remove locais atuais
+              await controllerViagemLocal.excluirViagemLocal(id);
   
-              // Depois, insere os novos locais
+              // Insere os novos locais
               for (let id_local of viagem.locais) {
                 const relacao = {
                   id_viagem: id,
                   id_local: id_local
                 };
                 await controllerViagemLocal.inserirViagemLocal(relacao, contentType);
+              }
+            }
+  
+            // Atualiza categorias relacionadas, se enviadas
+            if (viagem.categorias && Array.isArray(viagem.categorias)) {
+              // Remove categorias atuais
+              await controllerCategoriaViagem.excluirCategoriaViagem(id);
+  
+              // Insere as novas categorias
+              for (let id_categoria of viagem.categorias) {
+                const relacao = {
+                  id_viagem: id,
+                  id_categoria: id_categoria
+                };
+                await controllerCategoriaViagem.inserirCategoriaViagem(relacao, contentType);
               }
             }
   
@@ -226,6 +254,7 @@ const atualizarViagem = async function(viagem, id, contentType) {
       return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER; //500
     }
   };
+  
   
 
 const excluirViagem = async function(id){

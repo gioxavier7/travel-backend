@@ -53,7 +53,7 @@ const updateLocal = async function(local){
                                                 estado = '${local.estado}',
                                                 pais = '${local.pais}',
                                                 latitude = '${local.latitude}',
-                                                longitude = '${local.longitude}',
+                                                longitude = '${local.longitude}'
                                             where id=${local.id}`
 
         let result = await prisma.$executeRawUnsafe(sql)
