@@ -110,19 +110,16 @@ const deleteViagemLocal = async function(id){
 
 const selectLocalByIdViagem = async function(idViagem){
   try {
-      let sql = `select tbl_viagem.* from tbl_local
-                          inner join tbl_viagem_local
-                            on tbl_viagem.id = tbl_viagem_local.id_viagem
-                          inner join tbl_local
-                            on tbl_local.id = tbl_viagem_local.id_local
-                      where tbl_viagem.id = ${idViagem}`
+      let sql = `
+        SELECT tbl_local.*
+        FROM tbl_local
+        INNER JOIN tbl_viagem_local ON tbl_local.id = tbl_viagem_local.id_local
+        INNER JOIN tbl_viagem ON tbl_viagem.id = tbl_viagem_local.id_viagem
+        WHERE tbl_viagem.id = ${idViagem}
+      `
 
       let result = await prisma.$queryRawUnsafe(sql)
-
-      if (result)
-        return result
-      else 
-        return false
+      return result || false
 
   } catch (error) {
       return false
@@ -131,24 +128,22 @@ const selectLocalByIdViagem = async function(idViagem){
 
 const selectViagemByIdLocal = async function(idLocal){
   try {
-      let sql = `select tbl_local.* from tbl_viagem
-                          inner join tbl_viagem_local
-                            on tbl_local.id = tbl_viagem_local.id_local
-                          inner join tbl_local
-                            on tbl_viagem.id = tbl_viagem_local.id_viagem
-                      where tbl_local.id = ${idLocal}`
+      let sql = `
+        SELECT tbl_viagem.*
+        FROM tbl_viagem
+        INNER JOIN tbl_viagem_local ON tbl_viagem.id = tbl_viagem_local.id_viagem
+        INNER JOIN tbl_local ON tbl_local.id = tbl_viagem_local.id_local
+        WHERE tbl_local.id = ${idLocal}
+      `
 
       let result = await prisma.$queryRawUnsafe(sql)
-
-      if (result)
-        return result
-      else 
-        return false
+      return result || false
 
   } catch (error) {
       return false
   }
 }
+
 
 
 module.exports = {

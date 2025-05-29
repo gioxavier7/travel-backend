@@ -35,7 +35,7 @@ const controllerCategoria = require('./controller/categoria/controllerCategoria'
 const controllerLocal = require('./controller/local/controllerLocal.js')
 const controllerMidia = require('./controller/midia/controllerMidia.js')
 const controllerViagem = require('./controller/viagem/controllerViagem.js')
-
+const controllerCategoriaViagem = require('./controller/viagem/controllerCategoriaViagem.js')
 
 //criando formato de dados que será recebido no body da requisição (POST/PUT)
 const bodyParserJSON = bodyParser.json()
@@ -222,13 +222,13 @@ app.get('/v1/diario-viagem/nacionalidade/:id', cors(), async function(request, r
 
 //endpoint do login
 app.post('/v1/diario-viagem/login', cors(), bodyParserJSON, async (request, response) => {
-    const { email, senha } = request.body;
+    const { email, senha } = request.body
 
-    const result = await controllerUsuario.loginUsuario(email, senha);
+    const result = await controllerUsuario.loginUsuario(email, senha)
 
-    response.status(result.status_code);
-    response.json(result);
-});
+    response.status(result.status_code)
+    response.json(result)
+})
 
 /* ---------- LOCAL ---------- */
 
@@ -493,6 +493,81 @@ app.delete('/v1/diario-viagem/viagem/:id', cors(), async function(request, respo
     response.status(result.status_code)
     response.json(result)
 })
+
+/* ---------- CATEGORIA-VIAGEM ------------ */
+
+// Endpoint para inserir uma nova categoria de viagem
+app.post('/v1/diario-viagem/categoria-viagem', cors(), async function(request, response) {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let result = await controllerCategoriaViagem.inserirCategoriaViagem(dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+// Endpoint para listar todas as categorias de viagem
+app.get('/v1/diario-viagem/categoria-viagem', cors(), async function(request, response) {
+    let result = await controllerCategoriaViagem.listarCategoriaViagem()
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+// Endpoint para buscar uma categoria de viagem pelo ID
+app.get('/v1/diario-viagem/categoria-viagem/:id', cors(), async function(request, response) {
+    let idCategoriaViagem = request.params.id
+
+    let result = await controllerCategoriaViagem.buscarCategoriaViagem(idCategoriaViagem)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+// Endpoint para atualizar uma categoria de viagem existente
+app.put('/v1/diario-viagem/categoria-viagem/:id', cors(), async function(request, response) {
+    let contentType = request.headers['content-type']
+    let idCategoriaViagem = request.params.id
+    let dadosBody = request.body
+
+    let result = await controllerCategoriaViagem.atualizarCategoriaViagem(dadosBody, idCategoriaViagem, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+// Endpoint para excluir uma categoria de viagem pelo ID
+app.delete('/v1/diario-viagem/categoria-viagem/:id', cors(), async function(request, response) {
+    let idCategoriaViagem = request.params.id
+
+    let result = await controllerCategoriaViagem.excluirCategoriaViagem(idCategoriaViagem)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+// Endpoint para buscar categorias por ID da viagem
+app.get('/v1/diario-viagem/categoria-viagem/viagem/:idViagem', cors(), async function(request, response) {
+    let idViagem = request.params.idViagem
+
+    let result = await controllerCategoriaViagem.buscarCategoriaPorViagem(idViagem)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+// Endpoint para buscar viagens por ID da categoria
+app.get('/v1/diario-viagem/categoria-viagem/categoria/:idCategoria', cors(), async function(request, response) {
+    let idCategoria = request.params.idCategoria
+
+    let result = await controllerCategoriaViagem.buscarViagemPorCategoria(idCategoria)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//inicializando o servidor na porta 8080
 
 app.listen(8080, function(){
     console.log('Servidor aguardando novas requisições...')

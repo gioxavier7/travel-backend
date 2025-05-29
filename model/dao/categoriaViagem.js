@@ -31,7 +31,7 @@ try {
         return false
 
 } catch (error) {
-    
+    console.log(error)
     return false
 }
 }
@@ -51,6 +51,7 @@ const selectAllCategoriaViagem = async function(){
       return false
 
   } catch (error) {
+    console.log(error)
     return false
   }
 }
@@ -67,6 +68,7 @@ const selectByIdCategoriaViagem = async function(id){
       return false
 
   } catch (error) {
+    console.log(error)
     return false
   }
 }
@@ -86,6 +88,7 @@ const updateCategoriaViagem = async function(CategoriaViagem){
         return false
 
   } catch (error) {
+    console.log(error)
     return false
   }
 }
@@ -102,6 +105,7 @@ const deleteCategoriaViagem = async function(id){
       return false
 
   } catch (error) {
+    console.log(error)
     return false
   }
 }
@@ -123,7 +127,8 @@ const selectLocalByIdViagem = async function(idViagem){
         return false
 
   } catch (error) {
-      return false
+    console.log(error)
+    return false
   }
 }
 
@@ -144,7 +149,8 @@ const selectViagemByIdLocal = async function(idLocal){
         return false
 
   } catch (error) {
-      return false
+    console.log(error)
+    return false
   }
 }
 
