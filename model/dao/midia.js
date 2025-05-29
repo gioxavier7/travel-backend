@@ -44,7 +44,7 @@ const updateMidia = async function(midia){
         let sql = `update tbl_midia set tipo = '${midia.tipo}',
                                                 url = '${midia.url}',
                                                 id_viagem = '${midia.id_viagem}'
-                                            where id=${viagem.id}`
+                                            where id=${midia.id}`
 
         let result = await prisma.$executeRawUnsafe(sql)
 
@@ -54,6 +54,8 @@ const updateMidia = async function(midia){
             return false
 
     } catch (error) {
+        console.log(error);
+        
         return false
     }
 }

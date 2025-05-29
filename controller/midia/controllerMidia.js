@@ -62,7 +62,7 @@ const listarMidia = async function(){
                 
                 for(itemMidia of resultMidia){
                     let dadosViagem = await controllerViagem.buscarViagem(itemMidia.id_viagem)
-                    itemMidia.viagem = dadosViagem.viagem
+                    itemMidia.viagem = dadosViagem.usuario
                     delete itemMidia.id_viagem
 
                     arrayMidias.push(itemMidia)
@@ -90,9 +90,9 @@ const buscarMidia = async function(id){
             return MESSAGE.ERROR_REQUIRE_FIELDS //400
         }else{
             let dadosMidia = {}
-            let resultMidia = await midiaDAO.selectByIdmidia(id)
+            let resultMidia = await midiaDAO.selectByIdMidia(id)
 
-            if(resultmidia != false || typeof(resultmidia) == 'object'){
+            if(resultMidia != false || typeof(resultMidia) == 'object'){
 
             //criando um json pra retornar a lista de midias
             if(resultMidia.length > 0){
@@ -102,7 +102,7 @@ const buscarMidia = async function(id){
                 
                 for(itemMidia of resultMidia){
                     let dadosViagem = await controllerViagem.buscarViagem(itemMidia.id_viagem)
-                    itemMidia.viagem = dadosViagem.viagem
+                    itemMidia.viagem = dadosViagem.usuario
                     delete itemMidia.id_viagem
 
                     arrayMidias.push(itemMidia)

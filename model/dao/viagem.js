@@ -34,8 +34,11 @@ const insertViagem = async function(viagem){
 
         let result = await prisma.$executeRawUnsafe(sql)
 
-        if(result)
-            return result
+        if(result){
+            let select = 'SELECT * FROM tbl_viagem ORDER BY id DESC LIMIT 1'
+            let result = await prisma.$queryRawUnsafe(select)
+            return result[0]
+        }
         else
             return false
 

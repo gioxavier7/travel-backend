@@ -87,7 +87,7 @@ const listarViagem = async function(){
                   arrayViagem.push(itemViagem)
               }
               //adiciona o novo array de usuario no json pra retornar no app
-              dadosViagem.usuario = arrayViagem
+              dadosViagem.viagem = arrayViagem
 
               return dadosViagem
           }else{
