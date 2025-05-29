@@ -60,14 +60,43 @@ CREATE TABLE tbl_local (
 CREATE TABLE tbl_viagem (
     id           INT PRIMARY KEY AUTO_INCREMENT,
     id_usuario   INT NOT NULL,          -- dono da viagem
-    titulo       VARCHAR(45)  NOT NULL,
-    descricao    VARCHAR(420),
+    titulo       VARCHAR(50)  NOT NULL,
+    descricao    VARCHAR(200),
     data_inicio  DATE         NOT NULL,
     data_fim     DATE         NOT NULL,
-    visibilidade ENUM('publica','privada','amigos') DEFAULT 'publica',
-    data_criacao DATE DEFAULT CURRENT_DATE,
-    nota         DOUBLE,
+    visibilidade ENUM('publica','privada') DEFAULT 'publica' not null,
+    data_criacao timestamp DEFAULT CURRENT_DATE,
     FOREIGN KEY (id_usuario) REFERENCES tbl_usuario(id)
+);
+
+/* ---------- MÍDIA DA VIAGEM ---------- */
+
+CREATE TABLE tbl_midia (
+    id            INT PRIMARY KEY AUTO_INCREMENT,
+    tipo ENUM('foto','video') NOT NULL,
+    url  TEXT      NOT NULL,
+    id_viagem INT  NOT NULL,
+    FOREIGN KEY (id_viagem) REFERENCES tbl_viagem(id)
+);
+
+/* ---------- RELACIONAMENTO VIAGEM ↔ LOCAL ---------- */
+
+CREATE TABLE tbl_viagem_local (
+    id         INT PRIMARY KEY AUTO_INCREMENT,
+    id_local   INT NOT NULL,
+    id_viagem  INT NOT NULL,
+    FOREIGN KEY (id_local)  REFERENCES tbl_local(id),
+    FOREIGN KEY (id_viagem) REFERENCES tbl_viagem(id)
+);
+
+/* ---------- RELACIONAMENTO VIAGEM ↔ CATEGORIA ---------- */
+
+CREATE TABLE tbl_categoria_viagem (
+    id          INT PRIMARY KEY AUTO_INCREMENT,
+    id_categoria INT NOT NULL,
+    id_viagem    INT NOT NULL,
+    FOREIGN KEY (id_categoria) REFERENCES tbl_categoria(id),
+    FOREIGN KEY (id_viagem)    REFERENCES tbl_viagem(id)
 );
 
 

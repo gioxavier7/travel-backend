@@ -33,6 +33,8 @@ const controllerSexo = require('./controller/sexo/controllerSexo.js')
 const controllerNacionalidade = require('./controller/nacionalidade/controllerNacionalidade.js')
 const controllerCategoria = require('./controller/categoria/controllerCategoria')
 const controllerLocal = require('./controller/local/controllerLocal.js')
+const controllerMidia = require('./controller/midia/controllerMidia.js')
+const controllerViagem = require('./controller/viagem/controllerViagem.js')
 
 
 //criando formato de dados que será recebido no body da requisição (POST/PUT)
@@ -355,6 +357,138 @@ app.delete('/v1/diario-viagem/categoria/:id', cors(), async function(request, re
     let idCategoria = request.params.id
 
     let result = await controllerCategoria.excluirCategoria(idCategoria)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+/* ---------- MÍDIA ---------- */
+
+//endpoint para inserir uma midia
+app.post('/v1/diario-viagem/midia', cors(), bodyParserJSON, async function(request, response){
+
+    //recebe o content type da requisição para validar o formato de dados
+    let contentType = request.headers['content-type']
+
+    //recebe os dados encaminhados no body da requisição
+    let dadosBody = request.body
+
+    let result = await controllerMidia.inserirMidia(dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//endpoint para retornar lista de midias
+app.get('/v1/diario-viagem/midia', cors(), async function(request, response){
+
+    //chama a função para retornar uma lista de usuario
+    let result = await controllerMidia.listarMidia()
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//endpoint para buscar um midia pelo id
+app.get('/v1/diario-viagem/midia/:id', cors(), async function(request, response){
+
+    let idMidia = request.params.id
+
+    let result = await controllerMidia.buscarMidia(idMidia)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+//endpoint pr atualizar um midia
+app.put('/v1/diario-viagem/midia/:id', cors(), bodyParserJSON, async function(request, response){
+    //recebe o content type da requisição
+    let contentType = request.headers['content-type']
+
+    //recebe o id da música
+    let idMidia = request.params.id
+
+    //recebe os dados do body
+    let dadosBody = request.body
+
+    let result = await controllerMidia.atualizarMidia(dadosBody, idMidia, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+// endpoint para deletar um midia
+app.delete('/v1/diario-viagem/midia/:id', cors(), async function(request, response){
+    let idMidia = request.params.id
+
+    let result = await controllerMidia.excluirMidia(idMidia)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+/* ---------- VIAGEM ---------- */
+
+//endpoint para inserir uma viagem
+app.post('/v1/diario-viagem/viagem', cors(), bodyParserJSON, async function(request, response){
+
+    //recebe o content type da requisição para validar o formato de dados
+    let contentType = request.headers['content-type']
+
+    //recebe os dados encaminhados no body da requisição
+    let dadosBody = request.body
+
+    let result = await controllerViagem.inserirViagem(dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//endpoint para retornar lista de viagems
+app.get('/v1/diario-viagem/viagem', cors(), async function(request, response){
+
+    //chama a função para retornar uma lista de usuario
+    let result = await controllerViagem.listarViagem()
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//endpoint para buscar um viagem pelo id
+app.get('/v1/diario-viagem/viagem/:id', cors(), async function(request, response){
+
+    let idViagem = request.params.id
+
+    let result = await controllerViagem.buscarViagem(idViagem)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+//endpoint pr atualizar um viagem
+app.put('/v1/diario-viagem/viagem/:id', cors(), bodyParserJSON, async function(request, response){
+    //recebe o content type da requisição
+    let contentType = request.headers['content-type']
+
+    //recebe o id da música
+    let idViagem = request.params.id
+
+    //recebe os dados do body
+    let dadosBody = request.body
+
+    let result = await controllerViagem.atualizarViagem(dadosBody, idViagem, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+// endpoint para deletar um viagem
+app.delete('/v1/diario-viagem/viagem/:id', cors(), async function(request, response){
+    let idViagem = request.params.id
+
+    let result = await controllerViagem.excluirViagem(idViagem)
 
     response.status(result.status_code)
     response.json(result)
