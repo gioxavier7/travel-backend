@@ -82,23 +82,25 @@ const updateCategoria = async function(categoria){
 
 }
 
-const deleteCategoria = async function(id){
+const deleteCategoria = async function(id) {
     try {
-
-        let sql = 'delete from tbl_categoria where id='+id
-
-        let result = await prisma.$executeRawUnsafe(sql)
-
-        if(result)
-            return true
-        else
-            return false
-
+      // Apaga os relacionamentos que usam essa categoria
+      await prisma.$executeRawUnsafe(`DELETE FROM tbl_categoria_viagem WHERE id_categoria = ${id}`);
+  
+      // Apaga a categoria
+      let sql = 'DELETE FROM tbl_categoria WHERE id=' + id;
+      let result = await prisma.$executeRawUnsafe(sql);
+  
+      if (result)
+        return true;
+      else
+        return false;
+  
     } catch (error) {
-        return false
+      console.log(error);
+      return false;
     }
-}
-
+  }
 
 
 

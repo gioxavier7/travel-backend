@@ -68,23 +68,25 @@ const updateLocal = async function(local){
     }
 }
 
-//função para excluir um local existente no banco de dados
-const deleteLocal = async function(id){
+const deleteLocal = async function(id) {
     try {
-
-        let sql = 'delete from tbl_local where id='+id
-
-        let result = await prisma.$executeRawUnsafe(sql)
-
-        if(result)
-            return true
-        else
-            return false
-
+      // Apaga os relacionamentos que usam esse local
+      await prisma.$executeRawUnsafe(`DELETE FROM tbl_viagem_local WHERE id_local = ${id}`);
+  
+      // Apaga o local
+      let sql = 'DELETE FROM tbl_local WHERE id=' + id;
+      let result = await prisma.$executeRawUnsafe(sql);
+  
+      if (result)
+        return true;
+      else
+        return false;
+  
     } catch (error) {
-        return false
+      console.log(error);
+      return false;
     }
-}
+  }
 
 //função para retornar todos os locais do banco de dados
 const selectAllLocal = async function(){

@@ -73,7 +73,7 @@ const buscarCategoria = async function(id){
                 if(resultCategoria.length > 0){
                     dadosCategoria.status = true
                     dadosCategoria.status_code = 200
-                    dadosCategoria.sexo = resultCategoria
+                    dadosCategoria.categoria = resultCategoria
                     return dadosCategoria //200
                 }else{
                     return MESSAGE.ERROR_NOT_FOUND //404

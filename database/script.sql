@@ -41,7 +41,7 @@ create table tbl_nacionalidade(
 create table tbl_categoria(
     id int primary key auto_increment,
     nome_categoria varchar(45) not null
-)
+);
 
 /* ---------- LOCAL ---------- */
 CREATE TABLE tbl_local (
@@ -53,8 +53,8 @@ CREATE TABLE tbl_local (
     estado VARCHAR(100),       
     cidade VARCHAR(100)        
 );
-
-
+show tables;
+desc tbl_viagem;
 /* ---------- VIAGEM ---------- */
 
 CREATE TABLE tbl_viagem (
@@ -65,7 +65,7 @@ CREATE TABLE tbl_viagem (
     data_inicio  DATE         NOT NULL,
     data_fim     DATE         NOT NULL,
     visibilidade ENUM('publica','privada') DEFAULT 'publica' not null,
-    data_criacao timestamp DEFAULT CURRENT_DATE,
+    data_criacao timestamp DEFAULT current_timestamp,
     FOREIGN KEY (id_usuario) REFERENCES tbl_usuario(id)
 );
 
@@ -88,6 +88,18 @@ CREATE TABLE tbl_viagem_local (
     FOREIGN KEY (id_local)  REFERENCES tbl_local(id),
     FOREIGN KEY (id_viagem) REFERENCES tbl_viagem(id)
 );
+
+INSERT INTO tbl_viagem_local (
+  id_viagem,
+  id_local
+) VALUES (
+  3, 3
+);
+SELECT * FROM tbl_usuario ORDER BY id DESC LIMIT 1;
+
+
+select * from tbl_viagem_local where id_viagem = 17;
+SELECT id FROM tbl_viagem ORDER BY id DESC LIMIT 1;
 
 /* ---------- RELACIONAMENTO VIAGEM ↔ CATEGORIA ---------- */
 
