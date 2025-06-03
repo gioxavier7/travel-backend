@@ -129,11 +129,29 @@ const selectByIdViagem = async function(id){
     }
 }
 
+const selectFeedViagem = async function () {
+    try {
+        let sql = `
+            SELECT * FROM tbl_viagem 
+            WHERE visibilidade = 'publica' 
+            ORDER BY id DESC
+        `;
+
+        let result = await prisma.$queryRawUnsafe(sql);
+        return result.length > 0 ? result : false;
+
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+};
+
 
 module.exports = {
     insertViagem,
     updateViagem,
     deleteViagem,
     selectAllViagem,
-    selectByIdViagem
+    selectByIdViagem,
+    selectFeedViagem
 }

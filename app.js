@@ -52,6 +52,13 @@ app.use((request, response, next)=>{
     next()
 })
 
+/* ---------- Feed - viagens públicas mais recentes ---------- */
+
+app.get('/v1/diario-viagem/feed', cors(), async (request, response) => {
+    let result = await controllerViagem.listarFeedViagem();
+    response.status(result.status_code).json(result);
+});
+
 /* ---------- USUARIO ---------- */
 
 //endpoint para inserir um usuario

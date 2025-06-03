@@ -2,7 +2,7 @@
   * Objetivo: Controller responsável pela manipilação do CRUD de dados de viagem
   * Data: 29/05/2025
   * Dev: Giovanna
-  * Versão: 1.0
+  * Versão: 1.4
   */
 
 //import do arquivo de configurações de mensagens de status cpde
@@ -297,10 +297,54 @@ const excluirViagem = async function(id){
   }
 }
 
+const listarFeedViagem = async function () {
+  try {
+      const arrayViagem = [];
+      let dadosViagem = {};
+
+      let resultViagem = await viagemDAO.selectFeedViagem();
+
+      if (resultViagem && Array.isArray(resultViagem)) {
+          dadosViagem.status = true;
+          dadosViagem.status_code = 200;
+          dadosViagem.item = resultViagem.length;
+
+          for (let itemViagem of resultViagem) {
+              let dadosUsuario = await controllerUsuario.buscarUsuario(itemViagem.id_usuario);
+              itemViagem.usuario = dadosUsuario.usuario;
+              delete itemViagem.id_usuario;
+
+              let dadosLocais = await controllerViagemLocal.buscarLocalPorViagem(itemViagem.id);
+              itemViagem.locais = dadosLocais.status ? dadosLocais.data : [];
+
+              let dadosCategorias = await controllerCategoriaViagem.buscarCategoriaPorViagem(itemViagem.id);
+              itemViagem.categorias = dadosCategorias.status ? dadosCategorias.data : [];
+
+              let dadosMidias = await buscarMidiaPorViagem.buscarMidiaPorViagem(itemViagem.id);
+              itemViagem.midias = dadosMidias.status ? dadosMidias.midia : [];
+
+              arrayViagem.push(itemViagem);
+          }
+
+          dadosViagem.viagem = arrayViagem;
+          return dadosViagem;
+
+      } else {
+          return MESSAGE.ERROR_NOT_FOUND; // 404
+      }
+
+  } catch (error) {
+      console.log(error);
+      return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER; // 500
+  }
+};
+
+
 module.exports = {
   inserirViagem,
   listarViagem,
   buscarViagem,
   atualizarViagem,
-  excluirViagem
+  excluirViagem,
+  listarFeedViagem
 }
