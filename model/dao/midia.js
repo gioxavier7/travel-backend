@@ -115,11 +115,28 @@ const selectByIdMidia = async function(id){
     }
 }
 
+// função para retornar todas as mídias de uma viagem específica
+const selectMidiaByIdViagem = async function(idViagem) {
+    try {
+        let sql = `SELECT * FROM tbl_midia WHERE id_viagem = ${idViagem}`
+        let result = await prisma.$queryRawUnsafe(sql)
+
+        if (result)
+            return result
+        else
+            return false
+
+    } catch (error) {
+        return false
+    }
+}
+
 
 module.exports = {
     insertMidia,
     updateMidia,
     deleteMidia,
     selectAllMidia,
-    selectByIdMidia
+    selectByIdMidia,
+    selectMidiaByIdViagem
 }

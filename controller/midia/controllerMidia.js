@@ -189,6 +189,8 @@ const excluirMidia = async function(id){
     }
 }
 
+
+
 module.exports = {
     inserirMidia,
     listarMidia,

@@ -16,6 +16,9 @@ const { json } = require('body-parser')
 const controllerUsuario = require('../usuario/controllerUsuario.js')
 const controllerViagemLocal = require('../viagem/controllerViagemLocal.js')
 const controllerCategoriaViagem = require('../viagem/controllerCategoriaViagem.js')
+const buscarMidiaPorViagem = require('../midia/controllerBuscarMidiaPorViagem.js');
+
+
 
 
 // função para inserir uma nova viagem
@@ -112,6 +115,11 @@ const listarViagem = async function(){
                     let dadosCategorias = await controllerCategoriaViagem.buscarCategoriaPorViagem(itemViagem.id);
                     itemViagem.categorias = (dadosCategorias.status && Array.isArray(dadosCategorias.data)) ? dadosCategorias.data : [];
 
+                    // buscar as midias relacionadas à viagem
+                    let dadosMidias = await buscarMidiaPorViagem.buscarMidiaPorViagem(itemViagem.id);
+                    itemViagem.midias = (dadosMidias.status && Array.isArray(dadosMidias.midia)) ? dadosMidias.midia : [];
+
+
                     arrayViagem.push(itemViagem);
                 }
 
@@ -161,6 +169,10 @@ const buscarViagem = async function(id){
                     // Buscar as categorias relacionadas à viagem
                     let dadosCategorias = await controllerCategoriaViagem.buscarCategoriaPorViagem(itemViagem.id);
                     itemViagem.categorias = (dadosCategorias.status && Array.isArray(dadosCategorias.data)) ? dadosCategorias.data : [];
+
+                    // buscar as midias relacionadas à viagem
+                    let dadosMidias = await buscarMidiaPorViagem.buscarMidiaPorViagem(itemViagem.id);
+                    itemViagem.midias = (dadosMidias.status && Array.isArray(dadosMidias.midia)) ? dadosMidias.midia : [];
 
                     arrayViagem.push(itemViagem);
                 }
