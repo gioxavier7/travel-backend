@@ -39,12 +39,19 @@ const inserirLocal = async function (local, contentType) {
                 return MESSAGE.ERROR_INVALID_DATA; // 422
             }
 
-            let resultLocal = await localDAO.insertLocal(local);
+            let resultLocal = await localDAO.insertLocal(local); //
 
-            if (resultLocal)
-                return MESSAGE.SUCCESS_CREATED_ITEM; // 201
-            else
+            if (resultLocal) {
+                // se resultLocal tiver o objeto do local com o ID, vai ser retornado com sucesso
+                return { 
+                    status: true, 
+                    status_code: 201, 
+                    message: MESSAGE.SUCCESS_CREATED_ITEM.message,
+                    local: resultLocal // retorna o objeto do local com o ID
+                };
+            } else {
                 return MESSAGE.ERROR_INTERNAL_SERVER_MODEL; // 500
+            }
         } else {
             return MESSAGE.ERROR_CONTENT_TYPE; // 415
         }
