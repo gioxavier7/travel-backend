@@ -36,6 +36,7 @@ const controllerLocal = require('./controller/local/controllerLocal.js')
 const controllerMidia = require('./controller/midia/controllerMidia.js')
 const controllerViagem = require('./controller/viagem/controllerViagem.js')
 const controllerCategoriaViagem = require('./controller/viagem/controllerCategoriaViagem.js')
+const controllerBuscarMidiaPorViagem = require('./controller/midia/controllerBuscarMidiaPorViagem.js')
 
 //criando formato de dados que será recebido no body da requisição (POST/PUT)
 const bodyParserJSON = bodyParser.json()
@@ -407,6 +408,17 @@ app.get('/v1/diario-viagem/midia/:id', cors(), async function(request, response)
     response.json(result)
 
 })
+
+// Endpoint para buscar todas as mídias associadas a uma viagem
+app.get('/v1/diario-viagem/viagem/:id/midias', cors(), async function (request, response) {
+    let idViagem = request.params.id;
+
+    let result = await controllerBuscarMidiaPorViagem.buscarMidiaPorViagem(idViagem);
+
+    response.status(result.status_code);
+    response.json(result);
+});
+
 
 //endpoint pr atualizar um midia
 app.put('/v1/diario-viagem/midia/:id', cors(), bodyParserJSON, async function(request, response){
