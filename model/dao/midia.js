@@ -21,7 +21,7 @@ const insertMidia = async function(midia){
                                 ) values (
                                  '${midia.tipo}',
                                  '${midia.url}',
-                                 '${midia.id_viagem}'
+                                 ${midia.id_viagem}
                                  )`
 
         let result = await prisma.$executeRawUnsafe(sql)

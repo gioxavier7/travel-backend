@@ -12,41 +12,45 @@ const {PrismaClient} =  require('@prisma/client')
 const prisma = new PrismaClient()
 
 //função para inserir um novo usuário
-const insertViagem = async function(viagem){
+const insertViagem = async function (viagem) {
     try {
-        let sql = `INSERT INTO tbl_viagem (
-                                titulo,
-                                descricao,
-                                data_inicio,
-                                data_fim,
-                                visibilidade,
-                                data_criacao,
-                                id_usuario
-                                ) values (
-                                 '${viagem.titulo}',
-                                 ${viagem.descricao ? `'${viagem.descricao}'` : null},
-                                 '${viagem.data_inicio}',
-                                 '${viagem.data_fim}',
-                                 '${viagem.visibilidade}',
-                                 ${viagem.data_criacao ? `'${viagem.data_criacao}'` : null},
-                                 '${viagem.id_usuario}'
-                                 )`
+        let sql = `
+            INSERT INTO tbl_viagem (
+                titulo,
+                descricao,
+                data_inicio,
+                data_fim,
+                visibilidade,
+                data_criacao,
+                id_usuario
+            ) VALUES (
+                '${viagem.titulo}',
+                ${viagem.descricao ? `'${viagem.descricao}'` : null},
+                '${viagem.data_inicio}',
+                '${viagem.data_fim}',
+                '${viagem.visibilidade}',
+                ${viagem.data_criacao ? `'${viagem.data_criacao}'` : null},
+                ${viagem.id_usuario}
+            )
+        `
 
-        let result = await prisma.$executeRawUnsafe(sql)
+        let result = await prisma.$executeRawUnsafe(sql);
 
-        if(result){
-            let select = 'SELECT * FROM tbl_viagem ORDER BY id DESC LIMIT 1'
-            let result = await prisma.$queryRawUnsafe(select)
-            return result[0]
+        if (result) {
+            // Busca a última viagem inserida
+            let select = `SELECT * FROM tbl_viagem ORDER BY id DESC LIMIT 1`;
+            let viagemCriada = await prisma.$queryRawUnsafe(select);
+            return viagemCriada[0];
+        } else {
+            return false;
         }
-        else
-            return false
 
     } catch (error) {
         console.log(error);
-        return false
+        return false;
     }
 }
+
 
 
 //função pra atualizar viagem
